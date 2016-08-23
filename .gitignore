@@ -5,3 +5,4 @@ revel_app/routes/
 cities/
 
 .idea
+.elasticsearch
