@@ -14,3 +14,6 @@ start_elasticsearch:
 
 stop_elasticsearch:
 	kill `cat es_pid`
+
+get_deps:
+	go get gopkg.in/olivere/elastic.v3
