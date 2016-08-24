@@ -16,4 +16,5 @@ stop_elasticsearch:
 	kill `cat es_pid`
 
 get_deps:
-	go get gopkg.in/olivere/elastic.v3
+	go get -u gopkg.in/olivere/elastic.v3
+	go get -u github.com/revel/cmd/revel
