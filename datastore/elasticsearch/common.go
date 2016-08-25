@@ -1,10 +1,13 @@
 package elasticsearch
 
 import (
-	"os"
-	"log"
-	"gopkg.in/olivere/elastic.v3"
 	"fmt"
+	"log"
+	"os"
+	"timezones_mc/revel_app/app/models"
+
+	"github.com/satori/go.uuid"
+	"gopkg.in/olivere/elastic.v3"
 )
 
 func connect() (client *elastic.Client) {
@@ -39,32 +42,60 @@ func connect() (client *elastic.Client) {
 	return client
 }
 
+// TODO: ElasticCITYStorage?
+//ElasticStorage implements the CityStorage interface
 type ElasticStorage struct {
 	*ElasticConfig
 	*elastic.Client
 }
 
 type ElasticConfig struct {
-	Index   string
-	Type    string
-	Mapping string
+	IndexName string
+	TypeName  string
+	Mapping   string
 }
 
-func NewElasticStorage(config *ElasticConfig, client *elastic.Client) *ElasticStorage {
-	return &ElasticStorage{config, client}
+func NewElasticStorage(config *ElasticConfig) *ElasticStorage {
+	return &ElasticStorage{config, connect()}
+}
+
+func (es *ElasticStorage) AddCity(city *models.City) error {
+	/*If city already exists, update the document and refresh the index.
+	Refresh vs Flush: Changes to Lucene are only persisted to disk during a Lucene commit (flush), which is a relatively
+	heavy operation and so cannot be performed after every index or delete operation. The refresh API allows to explicitly
+	refresh one or more index, making all operations performed since the last refresh available for search.
+	Also see: http://stackoverflow.com/questions/19963406/refresh-vs-flush.*/
+	result, err := es.Client.
+		Index().
+		Index(es.IndexName).
+		Type(es.TypeName).
+		Id(uuid.NewV4().String()).
+		BodyJson(city).
+		Do()
+	if err != nil {
+		// TODO: Handle error
+		panic(err)
+	}
+	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
+
+	if result.Version == 1 && !result.Created {
+		return fmt.Errorf("City has not been indexed.\n")
+	}
+
+	return nil
 }
 
 // Delete and recreate the index if it exists, otherwise create a new index.
 // TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
-func (i *ElasticStorage) Reindex() error {
-	indexName := i.Index
+func (es *ElasticStorage) Reindex() error {
+	indexName := es.IndexName
 
-	exists, err := i.IndexExists(indexName).Do()
+	exists, err := es.IndexExists(indexName).Do()
 	if err != nil {
 		return err
 	}
 	if exists {
-		deleteIndex, err := i.DeleteIndex(indexName).Do()
+		deleteIndex, err := es.DeleteIndex(indexName).Do()
 		if err != nil {
 			return err
 		}
@@ -73,7 +104,7 @@ func (i *ElasticStorage) Reindex() error {
 		}
 	}
 
-	createIndex, err := i.CreateIndex(indexName).Body(i.Mapping).Do()
+	createIndex, err := es.CreateIndex(indexName).Body(es.Mapping).Do()
 	if err != nil {
 		return err
 	}
@@ -82,7 +113,7 @@ func (i *ElasticStorage) Reindex() error {
 	}
 
 	alias := fmt.Sprintf("%s-%s", indexName, "alias")
-	aliasCreate, err := i.Alias().Add(indexName, alias).Do()
+	aliasCreate, err := es.Alias().Add(indexName, alias).Do()
 	if err != nil {
 		return fmt.Errorf("Couldn't create alias for index %s: %s", indexName, err.Error())
 	}

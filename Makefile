@@ -18,3 +18,4 @@ stop_elasticsearch:
 get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel
+	go get -u github.com/satori/go.uuid

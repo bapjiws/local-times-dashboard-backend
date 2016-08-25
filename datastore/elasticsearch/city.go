@@ -2,7 +2,8 @@ package elasticsearch
 
 import (
 	"fmt"
-	"../../revel_app/app/models"
+	"timezones_mc/revel_app/app/models"
+
 	"gopkg.in/olivere/elastic.v3"
 )
 
@@ -21,13 +22,13 @@ var mapping = `{
     }
 }`
 
-var CityIndexConfig *ElasticConfig = &ElasticConfig{
-	Index:   "timezones",
-	Type:    "city",
-	Mapping: `{"mappings": ` + mapping + `}`,
+var CityStorageConfig *ElasticConfig = &ElasticConfig{
+	IndexName: "timezones",
+	TypeName:   "city", //TODO: "citieS"?
+	Mapping:   `{"mappings": ` + mapping + `}`,
 }
 
-type CityIndex struct {
+type CityStorage struct {
 	*ElasticStorage
 }
 
@@ -50,34 +51,12 @@ func CreateIndex() error { // TODO: make it a method a with pointer receiver?
 	return nil
 }
 
-func NewCityIndex(config *ElasticConfig, client *elastic.Client) *CityIndex {
-	return &CityIndex{NewElasticStorage(config, connect())}
+func NewCityStorage(config *ElasticConfig, client *elastic.Client) *CityStorage {
+	return &CityStorage{NewElasticStorage(config)}
 }
 
-func AddDocument(city models.City) error {
-	// TODO: use connect() and make the latter return an error instead of panicking
-	client, err := elastic.NewClient()
-	if err != nil {
-		return fmt.Errorf("Couldn't create a client: %s.\n", err.Error())
-	}
-
-	put, err := client.Index().
-		Index("timezones").
-		Type("city").
-		Id("1"). // TODO: work this out
-		BodyJson(city).
-		Do()
-	if err != nil {
-		// TODO: Handle error
-		panic(err)
-	}
-	fmt.Printf("Indexed tweet %s to index %s, type %s\n", put.Id, put.Index, put.Type)
-
-	return nil
-}
-
-// TODO: use this one instead of AddDocument above BUT check the Refresh part!
-func (i *CityIndex) IndexCity(city *models.City) (*models.City, *elastic.IndexResponse, error) {
+// TODO: move into
+func (cs *CityStorage) IndexCity(city *models.City) (*models.City, *elastic.IndexResponse, error) {
 	var result *elastic.IndexResponse
 	var err error
 
@@ -98,4 +77,3 @@ func (i *CityIndex) IndexCity(city *models.City) (*models.City, *elastic.IndexRe
 
 	return city, result, nil
 }
-
