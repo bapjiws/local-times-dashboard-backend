@@ -28,7 +28,7 @@ var CityIndexConfig *ElasticConfig = &ElasticConfig{
 }
 
 type CityIndex struct {
-	*ElasticIndex
+	*ElasticStorage
 }
 
 func CreateIndex() error { // TODO: make it a method a with pointer receiver?
@@ -51,7 +51,7 @@ func CreateIndex() error { // TODO: make it a method a with pointer receiver?
 }
 
 func NewCityIndex(config *ElasticConfig, client *elastic.Client) *CityIndex {
-	return &CityIndex{NewElasticIndex(config, connect())}
+	return &CityIndex{NewElasticStorage(config, connect())}
 }
 
 func AddDocument(city models.City) error {

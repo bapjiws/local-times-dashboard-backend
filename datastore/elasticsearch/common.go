@@ -39,10 +39,9 @@ func connect() (client *elastic.Client) {
 	return client
 }
 
-type ElasticIndex struct {
+type ElasticStorage struct {
 	*ElasticConfig
 	*elastic.Client
-	Error error
 }
 
 type ElasticConfig struct {
@@ -51,13 +50,13 @@ type ElasticConfig struct {
 	Mapping string
 }
 
-func NewElasticIndex(config *ElasticConfig, client *elastic.Client) *ElasticIndex {
-	return &ElasticIndex{config, client, nil}
+func NewElasticStorage(config *ElasticConfig, client *elastic.Client) *ElasticStorage {
+	return &ElasticStorage{config, client}
 }
 
 // Delete and recreate the index if it exists, otherwise create a new index.
 // TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
-func (i *ElasticIndex) Reindex() error {
+func (i *ElasticStorage) Reindex() error {
 	indexName := i.Index
 
 	exists, err := i.IndexExists(indexName).Do()
