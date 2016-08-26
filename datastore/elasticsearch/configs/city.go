@@ -1,5 +1,9 @@
 package elasticsearch
 
+import (
+	"timezones_mc/datastore/elasticsearch"
+)
+
 // TODO: complete
 var mapping = `{
     "settings":{
@@ -15,8 +19,7 @@ var mapping = `{
     }
 }`
 
-//TODO: create a folder with configs?
-var CityStoreConfig *ElasticConfig = &ElasticConfig{
+var CityStoreConfig *elasticsearch.ElasticConfig = &elasticsearch.ElasticConfig{
 	IndexName: "timezones",
 	TypeName:   "city", //TODO: "citieS"?
 	Mapping:   `{"mappings": ` + mapping + `}`,
