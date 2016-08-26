@@ -42,8 +42,7 @@ func connect() (client *elastic.Client) {
 	return client
 }
 
-// TODO: ElasticCITYStorage?
-//ElasticStore implements the CityStorage interface
+//ElasticStore implements the DataStore interface
 type ElasticStore struct {
 	*ElasticConfig
 	*elastic.Client
@@ -59,7 +58,7 @@ func NewElasticStore(config *ElasticConfig) *ElasticStore {
 	return &ElasticStore{config, connect()}
 }
 
-func (es *ElasticStore) AddCity(city *models.City) error {
+func (es *ElasticStore) AddDocument(doc models.Document) error {
 	/*If city already exists, update the document and refresh the index.
 	Refresh vs Flush: Changes to Lucene are only persisted to disk during a Lucene commit (flush), which is a relatively
 	heavy operation and so cannot be performed after every index or delete operation. The refresh API allows to explicitly
@@ -70,7 +69,7 @@ func (es *ElasticStore) AddCity(city *models.City) error {
 		Index(es.IndexName).
 		Type(es.TypeName).
 		Id(uuid.NewV4().String()).
-		BodyJson(city).
+		BodyJson(doc).
 		Do()
 	if err != nil {
 		// TODO: Handle error
@@ -79,7 +78,7 @@ func (es *ElasticStore) AddCity(city *models.City) error {
 	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 
 	if result.Version == 1 && !result.Created {
-		return fmt.Errorf("City %s has not been indexed.\n", city.Name)
+		return fmt.Errorf("City %s has not been indexed.\n", doc.String())
 	}
 
 	return nil

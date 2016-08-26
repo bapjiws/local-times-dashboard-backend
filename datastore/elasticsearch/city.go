@@ -1,9 +1,5 @@
 package elasticsearch
 
-import (
-	"gopkg.in/olivere/elastic.v3"
-)
-
 // TODO: complete
 var mapping = `{
     "settings":{
@@ -19,16 +15,17 @@ var mapping = `{
     }
 }`
 
-var CityStorageConfig *ElasticConfig = &ElasticConfig{
+//TODO: create a folder with configs?
+var CityStoreConfig *ElasticConfig = &ElasticConfig{
 	IndexName: "timezones",
 	TypeName:   "city", //TODO: "citieS"?
 	Mapping:   `{"mappings": ` + mapping + `}`,
 }
 
-type CityStore struct {
-	*ElasticStore
-}
-
-func NewCityStore(config *ElasticConfig, client *elastic.Client) *CityStore {
-	return &CityStore{NewElasticStore(config)}
-}
+//type CityStore struct {
+//	*ElasticStore
+//}
+//
+//func NewCityStore(config *ElasticConfig) *CityStore {
+//	return &CityStore{NewElasticStore(config)}
+//}

@@ -1,5 +1,7 @@
 package datastore
 
+import "timezones_mc/revel_app/app/models"
+
 type Datastore interface {
-	CityStore
+	AddDocument(doc models.Document) error
 }
