@@ -10,33 +10,42 @@ import (
 	"gopkg.in/olivere/elastic.v3"
 )
 
+// TODO: export
+func panicOnError(e error) {
+	if e != nil {
+		panic(e.Error())
+	}
+}
+
 func connect() (client *elastic.Client) {
 	var err error
 	var debugMode = os.Getenv("DEBUG_MODE")
-	if debugMode == "" {
-		debugMode = "none"
+	if debugMode == "" { // TODO bad cases like "console" or "file"
+		debugMode = "NONE"
 	}
 
-	var elasticSearchDomain = "http://localhost:9200" // TODO: eliminate?
-
-	// TODO: consult with https://github.com/olivere/elastic/wiki/Logging
+	// Stuff adopted from: https://github.com/olivere/elastic/wiki/Logging
 	switch debugMode {
-	case "none":
-		if client, err = elastic.NewClient(elastic.SetURL(elasticSearchDomain), elastic.SetSniff(false)); err != nil {
-			panic("ElasticDomain: " + elasticSearchDomain + " Error: " + err.Error())
-		}
-	case "console":
-		if client, err = elastic.NewClient(elastic.SetURL(elasticSearchDomain), elastic.SetTraceLog(log.New(os.Stdout, "AA_", 1)), elastic.SetSniff(false)); err != nil {
-			panic("ElasticDomain: " + elasticSearchDomain + " Error: " + err.Error())
-		}
-	case "file":
-		file, err := os.OpenFile("elastic.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0660)
-		if err != nil {
-			panic(err)
-		}
-		if client, err = elastic.NewClient(elastic.SetURL(elasticSearchDomain), elastic.SetTraceLog(log.New(file, "ELASTIC ", log.LstdFlags)), elastic.SetSniff(false)); err != nil {
-			panic("ElasticDomain: " + elasticSearchDomain + " Error: " + err.Error())
-		}
+	case "NONE":
+		client, err = elastic.NewClient()
+		panicOnError(err)
+	case "CONSOLE":
+		client, err = elastic.NewClient(
+			elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
+			elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
+			elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)),
+		)
+		panicOnError(err)
+	case "FILE":
+		file, err := os.OpenFile("elastic.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+		panicOnError(err)
+
+		client, err = elastic.NewClient(
+			elastic.SetInfoLog(log.New(file, "ELASTIC ", log.LstdFlags)),
+			elastic.SetErrorLog(log.New(file, "ELASTIC ", log.LstdFlags)),
+			elastic.SetTraceLog(log.New(file, "ELASTIC ", log.LstdFlags)),
+		)
+		panicOnError(err)
 	}
 
 	return client
@@ -80,7 +89,7 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 		return fmt.Errorf("City %s has not been indexed.\n", doc.String())
 	}
 
-	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
+	fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 	return nil
 }
 
