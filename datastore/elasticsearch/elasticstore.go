@@ -75,12 +75,12 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 		// TODO: Handle error
 		panic(err)
 	}
-	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 
 	if result.Version == 1 && !result.Created {
 		return fmt.Errorf("City %s has not been indexed.\n", doc.String())
 	}
 
+	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 	return nil
 }
 

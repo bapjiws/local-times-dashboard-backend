@@ -15,6 +15,9 @@ start_elasticsearch:
 stop_elasticsearch:
 	kill `cat es_pid`
 
+clean_elasticsearch:
+	curl -XDELETE "localhost:9200/*"
+
 get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel

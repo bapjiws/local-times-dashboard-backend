@@ -17,6 +17,6 @@ type City struct {
 	Longitude   float64 `json:"longitude"`
 }
 
-func (c *City) String() string {
+func (c City) String() string {
 	return c.Name
 }

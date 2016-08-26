@@ -1,10 +1,9 @@
-package elasticsearch
+package configs
 
 import (
 	"timezones_mc/datastore/elasticsearch"
 )
 
-// TODO: complete
 var mapping = `{
     "settings":{
         "number_of_shards":1,
@@ -13,7 +12,18 @@ var mapping = `{
     "mappings":{
         "city":{
             "properties":{
-
+                "countryCode":{
+                    "type":"string"
+                },
+                "latitude":{
+                    "type":"double"
+                },
+                "longitude":{
+                    "type":"double"
+                },
+                "name":{
+                    "type":"string"
+                }
             }
         }
     }
@@ -21,14 +31,6 @@ var mapping = `{
 
 var CityStoreConfig *elasticsearch.ElasticConfig = &elasticsearch.ElasticConfig{
 	IndexName: "timezones",
-	TypeName:   "city", //TODO: "citieS"?
-	Mapping:   `{"mappings": ` + mapping + `}`,
+	TypeName:   "city",
+	Mapping:   mapping,
 }
-
-//type CityStore struct {
-//	*ElasticStore
-//}
-//
-//func NewCityStore(config *ElasticConfig) *CityStore {
-//	return &CityStore{NewElasticStore(config)}
-//}
