@@ -43,8 +43,8 @@ func connect() (client *elastic.Client) {
 }
 
 // TODO: ElasticCITYStorage?
-//ElasticStorage implements the CityStorage interface
-type ElasticStorage struct {
+//ElasticStore implements the CityStorage interface
+type ElasticStore struct {
 	*ElasticConfig
 	*elastic.Client
 }
@@ -55,11 +55,11 @@ type ElasticConfig struct {
 	Mapping   string
 }
 
-func NewElasticStorage(config *ElasticConfig) *ElasticStorage {
-	return &ElasticStorage{config, connect()}
+func NewElasticStore(config *ElasticConfig) *ElasticStore {
+	return &ElasticStore{config, connect()}
 }
 
-func (es *ElasticStorage) AddCity(city *models.City) error {
+func (es *ElasticStore) AddCity(city *models.City) error {
 	/*If city already exists, update the document and refresh the index.
 	Refresh vs Flush: Changes to Lucene are only persisted to disk during a Lucene commit (flush), which is a relatively
 	heavy operation and so cannot be performed after every index or delete operation. The refresh API allows to explicitly
@@ -79,15 +79,15 @@ func (es *ElasticStorage) AddCity(city *models.City) error {
 	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 
 	if result.Version == 1 && !result.Created {
-		return fmt.Errorf("City has not been indexed.\n")
+		return fmt.Errorf("City %s has not been indexed.\n", city.Name)
 	}
 
 	return nil
 }
 
-// Delete and recreate the index if it exists, otherwise create a new index.
+// Delete and recreate the index if it exists, otherwise create a new index and an alias for it.
 // TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
-func (es *ElasticStorage) Reindex() error {
+func (es *ElasticStore) Reindex() error {
 	indexName := es.IndexName
 
 	exists, err := es.IndexExists(indexName).Do()
