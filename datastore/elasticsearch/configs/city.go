@@ -12,6 +12,9 @@ var mapping = `{
     "mappings":{
         "city":{
             "properties":{
+                "accentName":{
+                    "type":"string"
+                },
                 "countryCode":{
                     "type":"string"
                 },

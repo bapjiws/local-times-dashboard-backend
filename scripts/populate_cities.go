@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/csv"
+	"flag"
+	"fmt"
+	"os"
 	"timezones_mc/datastore/elasticsearch"
 	"timezones_mc/datastore/elasticsearch/configs"
 	"timezones_mc/revel_app/app/models"
-	"encoding/csv"
-	"flag"
-	"os"
-	"fmt"
 	//"io"
 	"strconv"
 )
@@ -21,8 +21,7 @@ func panicOnError(e error) {
 
 var fileFlag = flag.String("file", "", "file to parse")
 
-//TODO: check http://stackoverflow.com/questions/1821811/how-to-read-write-from-to-file
-//TODO: also check https://gobyexample.com/reading-files
+// Unhandled characters: https://en.wikipedia.org/wiki/%C3%80
 func main() {
 	flag.Parse()
 
@@ -58,19 +57,20 @@ func main() {
 
 	headers, err := csvReader.Read()
 	panicOnError(err)
-	fmt.Printf("Headers: %v\n", headers)
+	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
 	testLine, err := csvReader.Read()
 	panicOnError(err)
 
-	latitude, _ := strconv.ParseFloat(testLine[5], 64) // TODO: check for error?
+	latitude, _ := strconv.ParseFloat(testLine[5], 64)  // TODO: check for error?
 	longitude, _ := strconv.ParseFloat(testLine[6], 64) // TODO: check for error?
 
 	println(testLine[2])
 
 	city := &models.City{
 		CountryCode: testLine[0],
-		Name:        testLine[2], //TODO: handle exotic characters!
+		Name:        testLine[1], // All names are lowercase -- do something about it?
+		AccentName:  testLine[2], //TODO: handle exotic characters (see the comment above)
 		Latitude:    latitude,
 		Longitude:   longitude,
 	}
