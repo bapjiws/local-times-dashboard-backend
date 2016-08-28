@@ -79,7 +79,7 @@ func main() {
 		}
 	}()
 
-	for w := 1; w <= 200; w++ {
+	for w := 1; w <= 200; w++ { //TODO: benchmarks with 100 goroutines.
 		wg.Add(1)
 		go processCity(jobs, &wg, esStore)
 	}
@@ -123,11 +123,12 @@ func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.Ela
 			bulkCounter = 0
 		}
 
-		if bulkCounter != 0 {
-			_, err := bulkRequest.Do() // TODO: extract response, too
-			panicOnError(err)
-			bulkCounter = 0
-		}
+	}
+
+	if bulkCounter != 0 {
+		_, err := bulkRequest.Do() // TODO: extract response, too
+		panicOnError(err)
+		bulkCounter = 0
 	}
 
 }
