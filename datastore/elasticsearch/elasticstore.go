@@ -89,7 +89,8 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 		return fmt.Errorf("City %s has not been indexed.\n", doc.String())
 	}
 
-	fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
+	// TODO: return this print statement?
+	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 	return nil
 }
 

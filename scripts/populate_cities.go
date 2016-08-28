@@ -4,12 +4,13 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strconv"
+	"sync"
 	"timezones_mc/datastore/elasticsearch"
 	"timezones_mc/datastore/elasticsearch/configs"
 	"timezones_mc/revel_app/app/models"
-	//"io"
-	"strconv"
 )
 
 // TODO: create a utils folder and move it there?
@@ -21,8 +22,12 @@ func panicOnError(e error) {
 
 var fileFlag = flag.String("file", "", "file to parse")
 
+var wg sync.WaitGroup
+
 // Unhandled characters: https://en.wikipedia.org/wiki/%C3%80
 func main() {
+	// TODO: wg := new(sync.WaitGroup)?
+
 	flag.Parse()
 
 	// go run scripts/populate_cities.go -file="cities/worldcities.txt"
@@ -53,63 +58,56 @@ func main() {
 	csvReader := csv.NewReader(file)
 	//csvReader.LazyQuotes = true
 
-	citiesImported := 0
+	//citiesImported := 0 // TODO: use an atomic counter or something like that + print every,say, 1000.
 
 	headers, err := csvReader.Read()
 	panicOnError(err)
 	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
-	testLine, err := csvReader.Read()
-	panicOnError(err)
+	jobs := make(chan []string)
 
-	latitude, _ := strconv.ParseFloat(testLine[5], 64)  // TODO: check for error?
-	longitude, _ := strconv.ParseFloat(testLine[6], 64) // TODO: check for error?
+	go func() {
+		for {
+			line, err := csvReader.Read()
+			if err == io.EOF {
+				break
+			}
+			panicOnError(err)
+			jobs <- line
+		}
+	}()
 
-	println(testLine[2])
-
-	city := &models.City{
-		CountryCode: testLine[0],
-		Name:        testLine[1], // All names are lowercase -- do something about it?
-		AccentName:  testLine[2], //TODO: handle exotic characters (see the comment above)
-		Latitude:    latitude,
-		Longitude:   longitude,
+	for w := 1; w <= 200; w++ {
+		wg.Add(1)
+		go processCity(jobs, &wg, esStore)
 	}
 
-	err = esStore.AddDocument(city)
-	panicOnError(err)
+	//citiesImported++
+	//fmt.Printf("Importing cities successfully completed!\n%d cities has been imported.\n", citiesImported)
 
-	citiesImported++
-
-	//for {
-	//	line, err := csvReader.Read()
-	//	if err == io.EOF {
-	//		break
-	//	}
-	//	panicOnError(err) // TODO: use another util function?
-	//	//if err != nil {
-	//	//	log.Fatal(err)
-	//	//}
-	//	//fmt.Println(record)
-	//
-	//	city := &models.City{
-	//		CountryCode: ,
-	//		Name:        ,
-	//		Latitude:    ,
-	//		Longitude:   ,
-	//	}
-	//
-	//	err = esStore.AddDocument(city)
-	//	panicOnError(err)
-	//
-	//	citiesImported++
-	//}
-
-	fmt.Printf("Importing cities successfully completed!\n%d cities has been imported.\n", citiesImported)
+	wg.Wait()
 }
 
-//tempCity := models.City{
-//CountryCode: "us",
-//Name:        "NYC",
-//Latitude:    123.45,
-//Longitude:   -123.45,
-//}
+//TODO: rename if perform bulk updates.
+func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.ElasticStore) {
+	defer wg.Done()
+
+	for job := range jobs {
+		//TODO: wait until get enough jobs to perform a bulk update request.
+
+		latitude, _ := strconv.ParseFloat(job[5], 64)  // TODO: check for error?
+		longitude, _ := strconv.ParseFloat(job[6], 64) // TODO: check for error?
+
+		city := &models.City{
+			CountryCode: job[0],
+			Name:        job[1], // All names are lowercase -- do something about it?
+			AccentName:  job[2], //TODO: handle exotic characters (see the comment above)
+			Latitude:    latitude,
+			Longitude:   longitude,
+		}
+
+		err := es.AddDocument(city)
+		panicOnError(err)
+	}
+
+}
