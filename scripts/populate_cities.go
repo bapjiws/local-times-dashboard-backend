@@ -11,6 +11,8 @@ import (
 	"timezones_mc/datastore/elasticsearch"
 	"timezones_mc/datastore/elasticsearch/configs"
 	"timezones_mc/revel_app/app/models"
+	"gopkg.in/olivere/elastic.v2"
+	"github.com/satori/go.uuid"
 )
 
 // TODO: create a utils folder and move it there?
@@ -56,7 +58,7 @@ func main() {
 	}()
 
 	csvReader := csv.NewReader(file)
-	//csvReader.LazyQuotes = true
+	csvReader.LazyQuotes = true // panic: line 19970, column 7: bare " in non-quoted-field
 
 	//citiesImported := 0 // TODO: use an atomic counter or something like that + print every,say, 1000.
 
@@ -92,6 +94,9 @@ func main() {
 func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.ElasticStore) {
 	defer wg.Done()
 
+	bulkCounter := 0
+	bulkRequest := es.Bulk()
+
 	for job := range jobs {
 		//TODO: wait until get enough jobs to perform a bulk update request.
 
@@ -106,8 +111,23 @@ func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.Ela
 			Longitude:   longitude,
 		}
 
-		err := es.AddDocument(city)
-		panicOnError(err)
+		//err := es.AddDocument(city)
+		//panicOnError(err)
+
+		bulkRequest.Add(elastic.NewBulkIndexRequest().Index(es.IndexName).Type(es.TypeName).Id(uuid.NewV4().String()).Doc(city))
+		bulkCounter++
+
+		if bulkCounter%1000 == 0 {
+			_, err := bulkRequest.Do() // TODO: extract response, too
+			panicOnError(err)
+			bulkCounter = 0
+		}
+
+		if bulkCounter != 0 {
+			_, err := bulkRequest.Do() // TODO: extract response, too
+			panicOnError(err)
+			bulkCounter = 0
+		}
 	}
 
 }
