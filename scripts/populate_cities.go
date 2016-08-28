@@ -45,16 +45,23 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error while opening the file: %s\n", err.Error())
 		os.Exit(1)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
 	csvReader := csv.NewReader(file)
 	//csvReader.LazyQuotes = true
 
 	citiesImported := 0
 
-	headers, _ := csvReader.Read()
+	headers, err := csvReader.Read()
+	panicOnError(err)
 	fmt.Printf("Headers: %v\n", headers)
 
-	testLine, _ := csvReader.Read()
+	testLine, err := csvReader.Read()
+	panicOnError(err)
 
 	latitude, _ := strconv.ParseFloat(testLine[5], 64) // TODO: check for error?
 	longitude, _ := strconv.ParseFloat(testLine[6], 64) // TODO: check for error?
