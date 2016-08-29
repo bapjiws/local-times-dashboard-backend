@@ -73,6 +73,7 @@ func main() {
 		for {
 			line, err := csvReader.Read()
 			if err == io.EOF {
+				close(jobs) // That's it, folks!
 				break
 			}
 			panicOnError(err)
