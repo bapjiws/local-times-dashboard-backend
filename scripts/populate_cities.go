@@ -67,6 +67,7 @@ func main() {
 	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
 	jobs := make(chan []string)
+	docs := make(chan models.Document)
 
 	go func() {
 		for {
@@ -79,23 +80,32 @@ func main() {
 		}
 	}()
 
-	for w := 1; w <= 200; w++ { //TODO: benchmarks with 100 goroutines.
+	for w := 1; w <= 200; w++ {
 		wg.Add(1)
-		go processCity(jobs, &wg, esStore)
+		go processLine( &wg, jobs, docs)
+	}
+
+	for w := 1; w <= 200; w++ {
+		wg.Add(1)
+		go processDoc(&wg, docs, esStore)
 	}
 
 	//citiesImported++
 	//fmt.Printf("Importing cities successfully completed!\n%d cities has been imported.\n", citiesImported)
 
 	wg.Wait()
+	// TODO: check if there are still some jobs to do and clean the mess up.
+	//if bulkCounter != 0 {
+	//	_, err := bulkRequest.Do() // TODO: extract response, too
+	//	panicOnError(err)
+	//	bulkCounter = 0
+	//}
+
 }
 
 //TODO: rename if perform bulk updates.
-func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.ElasticStore) {
+func processLine(wg *sync.WaitGroup, jobs <-chan []string, docs chan<- models.Document) {
 	defer wg.Done()
-
-	bulkCounter := 0
-	bulkRequest := es.Bulk()
 
 	for job := range jobs {
 		//TODO: wait until get enough jobs to perform a bulk update request.
@@ -114,7 +124,18 @@ func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.Ela
 		//err := es.AddDocument(city)
 		//panicOnError(err)
 
-		bulkRequest.Add(elastic.NewBulkIndexRequest().Index(es.IndexName).Type(es.TypeName).Id(uuid.NewV4().String()).Doc(city))
+		docs <- city
+	}
+}
+
+func processDoc (wg *sync.WaitGroup, docs <-chan models.Document, es *elasticsearch.ElasticStore) {
+	defer wg.Done()
+
+	bulkCounter := 0
+	bulkRequest := es.Bulk()
+
+	for doc := range docs {
+		bulkRequest.Add(elastic.NewBulkIndexRequest().Index(es.IndexName).Type(es.TypeName).Id(uuid.NewV4().String()).Doc(doc))
 		bulkCounter++
 
 		if bulkCounter%1000 == 0 {
@@ -122,13 +143,5 @@ func processCity(jobs <-chan []string, wg *sync.WaitGroup, es *elasticsearch.Ela
 			panicOnError(err)
 			bulkCounter = 0
 		}
-
 	}
-
-	if bulkCounter != 0 {
-		_, err := bulkRequest.Do() // TODO: extract response, too
-		panicOnError(err)
-		bulkCounter = 0
-	}
-
 }
