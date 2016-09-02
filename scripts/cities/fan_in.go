@@ -4,18 +4,18 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-//"github.com/satori/go.uuid"
-//"gopkg.in/olivere/elastic.v2"
 	"io"
 	"os"
 	"strconv"
 	"sync"
 	"sync/atomic"
-//"timezones_mc/datastore/elasticsearch"
-//"timezones_mc/datastore/elasticsearch/configs"
-	"timezones_mc/revel_app/app/models"
-	"log"
 	"time"
+	"timezones_mc/datastore/elasticsearch"
+	"timezones_mc/datastore/elasticsearch/configs"
+	"timezones_mc/revel_app/app/models"
+
+	"github.com/satori/go.uuid"
+	"gopkg.in/olivere/elastic.v2"
 )
 
 // TODO: create a utils folder and move it there?
@@ -26,21 +26,19 @@ func panicOnError(e error) {
 }
 
 var (
-	fileFlag = flag.String("file", "", "file to parse")
-	wg sync.WaitGroup
-	start time.Time
-	citiesRead uint64 = 0
+	fileFlag        = flag.String("file", "", "file to parse")
+	wg              sync.WaitGroup
+	start           time.Time
+	citiesRead      uint64 = 0
 	citiesProcessed uint64 = 0
-	bulkCounter uint64 = 0
+	bulkCounter     uint64 = 0
 )
 
+// go run scripts/cities/fan_in.go -file="cities/worldcities.txt"
 func main() {
 	start = time.Now()
 
 	flag.Parse()
-
-	// go run scripts/cities/fan_in.go -file="cities/worldcities.txt"
-	println(*fileFlag)
 
 	if *fileFlag == "" {
 		fmt.Fprintf(os.Stderr, "CSV file has not been specified. Use the 'file' flag:\n")
@@ -49,9 +47,9 @@ func main() {
 	}
 	fmt.Printf("Importing cities from %s\n", *fileFlag)
 
-	//esStore := elasticsearch.NewElasticStore(configs.CityStoreConfig)
-	//err := esStore.Reindex()
-	//panicOnError(err)
+	esStore := elasticsearch.NewElasticStore(configs.CityStoreConfig)
+	err := esStore.Reindex()
+	panicOnError(err)
 
 	file, err := os.Open(*fileFlag)
 	if err != nil {
@@ -67,14 +65,12 @@ func main() {
 	csvReader := csv.NewReader(file)
 	csvReader.LazyQuotes = true // panic: line 19970, column 7: bare " in non-quoted-field
 
-	//citiesImported := 0 // TODO: use an atomic counter or something like that + print every,say, 1000.
-
 	headers, err := csvReader.Read()
 	panicOnError(err)
 	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
 	records := recordGenerator(csvReader)
-	//bulkRequest := esStore.Bulk()
+	bulkRequest := esStore.Bulk()
 
 	pipe := mergeCityChannels(
 		getCityChan(records),
@@ -82,41 +78,26 @@ func main() {
 		getCityChan(records),
 		getCityChan(records),
 	)
-	for _ = range pipe {
-		//if city.Name == "CITY" {
-		//	println("YES")
-		//}
+	for city := range pipe {
 		atomic.AddUint64(&citiesProcessed, 1)
-		counter:= atomic.LoadUint64(&citiesProcessed)
+		bulkRequest.Add(elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city))
+		atomic.AddUint64(&bulkCounter, 1)
 
-		if counter == 3173958 {
-			println(counter)
-			elapsed := time.Since(start)
-			log.Printf("Took %s", elapsed)
-			os.Exit(0)
+		if counter := atomic.LoadUint64(&bulkCounter); counter%1000 == 0 {
+			_, err := bulkRequest.Do()
+			panicOnError(err)
+			atomic.StoreUint64(&bulkCounter, 0)
 		}
-
-		//bulkRequest.Add(elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city))
-		//atomic.AddUint64(&bulkCounter, 1)
-
-		//if counter := atomic.LoadUint64(&bulkCounter); counter%1000 == 0 {
-		//	_, err := bulkRequest.Do() // TODO: extract response, too
-		//	panicOnError(err)
-		//	atomic.StoreUint64(&bulkCounter, 0)
-		//}
 
 	}
 
-	//if counter := atomic.LoadUint64(&bulkCounter); counter != 0 {
-	//	println(counter)
-	//	_, err := bulkRequest.Do() // TODO: extract response, too
-	//	panicOnError(err)
-	//}
+	if counter := atomic.LoadUint64(&bulkCounter); counter != 0 {
+		_, err := bulkRequest.Do()
+		panicOnError(err)
+	}
 
 	citiesRead := atomic.LoadUint64(&citiesRead)
-	//fmt.Println("Cities read:", citiesRead)
 	citiesProcessed := atomic.LoadUint64(&citiesProcessed)
-	//fmt.Println("Cities Processed:", citiesProcessed)
 	elapsed := time.Since(start)
 
 	fmt.Printf("Imported %d cities out of %d in %s \n", citiesProcessed, citiesRead, elapsed)
