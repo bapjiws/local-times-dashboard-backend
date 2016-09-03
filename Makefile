@@ -6,11 +6,11 @@ get_cities:
 
 get_elasticsearch:
 	mkdir .elasticsearch && \
-	curl https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.3.5/elasticsearch-2.3.5.tar.gz |\
-	tar -xvzf - -C .elasticsearch
+	curl https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.0/elasticsearch-2.4.0.tar.gz |\
+	tar -xvzf - -C .elasticsearch --strip-components=1
 
 start_elasticsearch:
-	.elasticsearch/elasticsearch-2.3.5/bin/elasticsearch -d -p es_pid
+	.elasticsearch/bin/elasticsearch -d -p es_pid
 
 stop_elasticsearch:
 	kill `cat es_pid`
