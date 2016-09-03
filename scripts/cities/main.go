@@ -34,7 +34,7 @@ var (
 	bulkCounter     uint64 = 0
 )
 
-// go run scripts/cities/fan_in/main.go -file="cities/worldcities.txt"
+// go run scripts/cities/main.go -file="cities/worldcities.txt"
 func main() {
 	start = time.Now()
 
@@ -70,7 +70,15 @@ func main() {
 	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
 	records := recordGenerator(csvReader)
-	bulkRequest := esStore.Bulk()
+
+	// On the usage of bulk processor, see: https://github.com/olivere/elastic/wiki/BulkProcessor
+	bulkProcessor, err :=  esStore.BulkProcessor().
+		Workers(4).
+		BulkActions(1000).
+		Do()
+	panicOnError(err)
+
+	//bulkRequest := esStore.Bulk()
 
 	pipe := mergeCityChannels(
 		getCityChan(records),
@@ -80,27 +88,34 @@ func main() {
 	)
 	for city := range pipe {
 		atomic.AddUint64(&citiesProcessed, 1)
-		bulkRequest.Add(elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city))
+		bulkRequest := elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city)
+		bulkProcessor.Add(bulkRequest)
+
 		atomic.AddUint64(&bulkCounter, 1)
 
-		if counter := atomic.LoadUint64(&bulkCounter); counter%1000 == 0 {
-			_, err := bulkRequest.Do()
-			panicOnError(err)
-			atomic.StoreUint64(&bulkCounter, 0)
-		}
+		//if counter := atomic.LoadUint64(&bulkCounter); counter%1000 == 0 {
+		//	_, err := bulkRequest.Do()
+		//	panicOnError(err)
+		//	atomic.StoreUint64(&bulkCounter, 0)
+		//}
 
 	}
 
-	if counter := atomic.LoadUint64(&bulkCounter); counter != 0 {
-		_, err := bulkRequest.Do()
-		panicOnError(err)
-	}
+	//if counter := atomic.LoadUint64(&bulkCounter); counter != 0 {
+	//	_, err := bulkRequest.Do()
+	//	panicOnError(err)
+	//}
 
-	citiesRead := atomic.LoadUint64(&citiesRead)
-	citiesProcessed := atomic.LoadUint64(&citiesProcessed)
+
+	citiesRead, citiesProcessed := atomic.LoadUint64(&citiesRead), atomic.LoadUint64(&citiesProcessed)
 	elapsed := time.Since(start)
 
 	fmt.Printf("Imported %d cities out of %d in %s \n", citiesProcessed, citiesRead, elapsed)
+
+	// Ask workers to commit all requests
+	err = bulkProcessor.Flush()
+	panicOnError(err)
+
 }
 
 func recordGenerator(csvReader *csv.Reader) <-chan []string {
