@@ -22,3 +22,6 @@ get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel
 	go get -u github.com/satori/go.uuid
+
+reindex_cities:
+	go run scripts/cities/main.go -file="cities/worldcities.txt"
