@@ -34,7 +34,7 @@ var (
 	bulkCounter     uint64 = 0
 )
 
-// go run scripts/cities/fan_in.go -file="cities/worldcities.txt"
+// go run scripts/cities/fan_in/main.go -file="cities/worldcities.txt"
 func main() {
 	start = time.Now()
 
@@ -138,7 +138,6 @@ func getCityChan(records <-chan []string) chan *models.City {
 			}
 
 			atomic.AddUint64(&citiesRead, 1)
-
 			cities <- city
 		}
 
