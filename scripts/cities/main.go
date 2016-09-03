@@ -31,7 +31,6 @@ var (
 	start           time.Time
 	citiesRead      uint64 = 0
 	citiesProcessed uint64 = 0
-	bulkCounter     uint64 = 0
 )
 
 // go run scripts/cities/main.go -file="cities/worldcities.txt"
@@ -72,13 +71,11 @@ func main() {
 	records := recordGenerator(csvReader)
 
 	// On the usage of bulk processor, see: https://github.com/olivere/elastic/wiki/BulkProcessor
-	bulkProcessor, err :=  esStore.BulkProcessor().
-		Workers(4).
+	bulkProcessor, err := esStore.BulkProcessor().
+		Workers(8).
 		BulkActions(1000).
 		Do()
 	panicOnError(err)
-
-	//bulkRequest := esStore.Bulk()
 
 	pipe := mergeCityChannels(
 		getCityChan(records),
@@ -90,22 +87,7 @@ func main() {
 		atomic.AddUint64(&citiesProcessed, 1)
 		bulkRequest := elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city)
 		bulkProcessor.Add(bulkRequest)
-
-		atomic.AddUint64(&bulkCounter, 1)
-
-		//if counter := atomic.LoadUint64(&bulkCounter); counter%1000 == 0 {
-		//	_, err := bulkRequest.Do()
-		//	panicOnError(err)
-		//	atomic.StoreUint64(&bulkCounter, 0)
-		//}
-
 	}
-
-	//if counter := atomic.LoadUint64(&bulkCounter); counter != 0 {
-	//	_, err := bulkRequest.Do()
-	//	panicOnError(err)
-	//}
-
 
 	citiesRead, citiesProcessed := atomic.LoadUint64(&citiesRead), atomic.LoadUint64(&citiesProcessed)
 	elapsed := time.Since(start)
@@ -115,11 +97,10 @@ func main() {
 	// Ask workers to commit all requests
 	err = bulkProcessor.Flush()
 	panicOnError(err)
-
 }
 
 func recordGenerator(csvReader *csv.Reader) <-chan []string {
-	records := make(chan []string, 1000)
+	records := make(chan []string)
 
 	go func() {
 		for {
@@ -137,7 +118,7 @@ func recordGenerator(csvReader *csv.Reader) <-chan []string {
 }
 
 func getCityChan(records <-chan []string) chan *models.City {
-	cities := make(chan *models.City, 1000)
+	cities := make(chan *models.City)
 
 	go func() {
 		for record := range records {
@@ -164,7 +145,7 @@ func getCityChan(records <-chan []string) chan *models.City {
 }
 
 func mergeCityChannels(cityChannels ...chan *models.City) chan *models.City {
-	pipe := make(chan *models.City, 1000)
+	pipe := make(chan *models.City)
 
 	output := func(cityChan <-chan *models.City) {
 		for city := range cityChan {
