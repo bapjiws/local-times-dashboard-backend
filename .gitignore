@@ -6,3 +6,4 @@ revel_app/routes/
 
 .idea
 .elasticsearch
+.kibana

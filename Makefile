@@ -18,6 +18,11 @@ stop_elasticsearch:
 clean_elasticsearch:
 	curl -XDELETE "localhost:9200/*"
 
+get_kibana:
+	mkdir .kibana && \
+	curl https://download.elastic.co/kibana/kibana/kibana-4.6.0-linux-x86_64.tar.gz |\
+	tar -xvz -C .kibana --strip-components=1
+
 get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel
