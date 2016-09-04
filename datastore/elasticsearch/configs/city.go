@@ -5,27 +5,37 @@ import (
 )
 
 var mapping = `{
-    "settings":{
-        "number_of_shards":1,
-        "number_of_replicas":0
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
     },
-    "mappings":{
-        "city":{
-            "properties":{
-                "accentName":{
-                    "type":"string"
+    "mappings": {
+        "city": {
+            "properties": {
+                "accentName": {
+                    "type": "string"
                 },
-                "countryCode":{
-                    "type":"string"
+                "countryCode": {
+                    "type": "string"
                 },
-                "latitude":{
-                    "type":"double"
+                "latitude": {
+                    "type": "double"
                 },
-                "longitude":{
-                    "type":"double"
+                "longitude": {
+                    "type": "double"
                 },
-                "name":{
-                    "type":"string"
+                "cityName": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "suggest": {
+                            "type": "completion",
+                            "analyzer": "simple",
+                            "search_analyzer": "simple",
+                            "payloads": true
+                        }
+                    }
                 }
             }
         }

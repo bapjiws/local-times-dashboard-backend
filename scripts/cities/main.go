@@ -127,10 +127,15 @@ func getCityChan(records <-chan []string) chan *models.City {
 
 			city := &models.City{
 				CountryCode: record[0],
-				Name:        record[1], // TODO: All names are lowercase -- do something about it?
-				AccentName:  record[2],
-				Latitude:    latitude,
-				Longitude:   longitude,
+				CityName: models.CityName{
+					Name: record[1], // TODO: All names are lowercase -- do something about it?
+					Suggest: elastic.NewSuggestField().
+						Input(record[1]).
+						Output(record[2]),
+				},
+				AccentName: record[2],
+				Latitude:   latitude,
+				Longitude:  longitude,
 			}
 
 			atomic.AddUint64(&citiesRead, 1)
