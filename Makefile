@@ -24,7 +24,7 @@ get_kibana:
 	tar -xvz -C .tools/kibana --strip-components=1
 
 start_kibana:
-	.tools/kibana/bin/kibana &
+	.tools/kibana/bin/kibana > /dev/null 2>&1 &
 
 stop_kibana:
 	ps aux | grep "kibana" | awk '{print $$2}' | xargs kill
