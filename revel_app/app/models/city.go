@@ -13,6 +13,7 @@ ru,moscow,Moscow,48,10381288,55.752222,37.615556
 // This struct partially maps to the ones that we get from our city database:
 // https://www.maxmind.com/en/free-world-cities-database
 type City struct {
+	Id          string                `json:"id"`
 	Name        string                `json:"name"`        // aka "City"
 	AccentName  string                `json:"accentName"`  // aka "AccentCity"
 	CountryCode string                `json:"countryCode"` // aka "Country"

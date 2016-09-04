@@ -85,7 +85,7 @@ func main() {
 	)
 	for city := range pipe {
 		atomic.AddUint64(&citiesProcessed, 1)
-		bulkRequest := elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(uuid.NewV4().String()).Doc(city)
+		bulkRequest := elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(city.Id).Doc(city)
 		bulkProcessor.Add(bulkRequest)
 	}
 
@@ -122,10 +122,12 @@ func getCityChan(records <-chan []string) chan *models.City {
 
 	go func() {
 		for record := range records {
+			id := uuid.NewV4().String()
 			latitude, _ := strconv.ParseFloat(record[5], 64)
 			longitude, _ := strconv.ParseFloat(record[6], 64)
 
 			city := &models.City{
+				Id:          id,
 				Name:        record[1], // TODO: All names are lowercase -- do something about it?
 				AccentName:  record[2],
 				CountryCode: record[0],
@@ -133,7 +135,8 @@ func getCityChan(records <-chan []string) chan *models.City {
 				Longitude:   longitude,
 				Suggest: elastic.NewSuggestField().
 					Input(record[1]).
-					Output(record[2]),
+					Output(record[2]).
+					Payload(map[string]string{"city_id": id}),
 			}
 
 			atomic.AddUint64(&citiesRead, 1)
