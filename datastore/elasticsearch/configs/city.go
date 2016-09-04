@@ -12,6 +12,9 @@ var mapping = `{
     "mappings": {
         "city": {
             "properties": {
+                "name": {
+                    "type": "string"
+                },
                 "accentName": {
                     "type": "string"
                 },
@@ -24,18 +27,11 @@ var mapping = `{
                 "longitude": {
                     "type": "double"
                 },
-                "cityName": {
-                    "properties": {
-                        "name": {
-                            "type": "string"
-                        },
-                        "suggest": {
-                            "type": "completion",
-                            "analyzer": "simple",
-                            "search_analyzer": "simple",
-                            "payloads": true
-                        }
-                    }
+                "suggest": {
+                    "type": "completion",
+                    "analyzer": "simple",
+                    "search_analyzer": "simple",
+                    "payloads": true
                 }
             }
         }
