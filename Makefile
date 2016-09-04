@@ -29,7 +29,10 @@ start_kibana:
 stop_kibana:
 	ps aux | grep "kibana" | awk '{print $$2}' | xargs kill
 
-get_tools: get_elasticsearch get_kibana
+get_sense:
+	.tools/kibana/bin/kibana plugin --install elastic/sense
+
+get_tools: get_elasticsearch get_kibana get_sense
 
 get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
