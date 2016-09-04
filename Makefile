@@ -7,7 +7,7 @@ get_cities:
 get_elasticsearch:
 	mkdir .elasticsearch && \
 	curl https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.0/elasticsearch-2.4.0.tar.gz |\
-	tar -xvzf - -C .elasticsearch --strip-components=1
+	tar -xvz -C .elasticsearch --strip-components=1
 
 start_elasticsearch:
 	.elasticsearch/bin/elasticsearch -d -p es_pid
