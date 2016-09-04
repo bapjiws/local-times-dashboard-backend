@@ -2,8 +2,6 @@ revel_app/test-results/
 revel_app/tmp/
 revel_app/routes/
 
-/cities/
-
 .idea
-.elasticsearch
-.kibana
+.raw_data
+.tools
