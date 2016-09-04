@@ -33,7 +33,7 @@ var (
 	citiesProcessed uint64 = 0
 )
 
-// go run scripts/cities/main.go -file="cities/worldcities.txt"
+// go run scripts/cities/main.go -file=".raw_data/cities/worldcities.txt"
 func main() {
 	start = time.Now()
 
