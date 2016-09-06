@@ -34,6 +34,10 @@ get_sense:
 
 get_tools: get_elasticsearch get_kibana get_sense
 
+start_tools: start_elasticsearch start_kibana
+
+stop_tools: stop_elasticsearch stop_kibana
+
 get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel
