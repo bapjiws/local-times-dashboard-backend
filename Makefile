@@ -2,7 +2,7 @@ run:
 	revel run timezones_mc/revel_app
 
 get_cities:
-	mkdir cities && curl http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz | gunzip -c > cities/worldcities.txt
+	mkdir -p .raw_data && mkdir -p .raw_data/cities && curl http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz | gunzip -c > .raw_data/cities/worldcities.txt
 
 get_elasticsearch:
 	mkdir -p .tools && mkdir -p .tools/elasticsearch && \
