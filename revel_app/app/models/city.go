@@ -1,6 +1,6 @@
 package models
 
-import "gopkg.in/olivere/elastic.v2"
+import "gopkg.in/olivere/elastic.v3"
 
 // TODO: remove when done
 /*

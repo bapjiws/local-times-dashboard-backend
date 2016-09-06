@@ -15,7 +15,7 @@ import (
 	"timezones_mc/revel_app/app/models"
 
 	"github.com/satori/go.uuid"
-	"gopkg.in/olivere/elastic.v2"
+	"gopkg.in/olivere/elastic.v3"
 )
 
 // TODO: create a utils folder and move it there?
