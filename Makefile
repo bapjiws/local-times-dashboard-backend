@@ -6,7 +6,7 @@ get_cities:
 
 get_elasticsearch:
 	mkdir -p .tools && mkdir -p .tools/elasticsearch && \
-	curl https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.0/elasticsearch-2.4.0.tar.gz |\
+	curl https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.3.5/elasticsearch-2.3.5.tar.gz |\
 	tar -xvz -C .tools/elasticsearch --strip-components=1
 
 start_elasticsearch:
