@@ -20,7 +20,7 @@ clean_elasticsearch:
 
 get_kibana:
 	mkdir -p .tools && mkdir -p .tools/kibana && \
-	curl https://download.elastic.co/kibana/kibana/kibana-4.6.0-linux-x86_64.tar.gz |\
+	curl https://download.elastic.co/kibana/kibana/kibana-4.5.4-linux-x64.tar.gz |\
 	tar -xvz -C .tools/kibana --strip-components=1
 
 start_kibana:
