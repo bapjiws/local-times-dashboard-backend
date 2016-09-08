@@ -1,6 +1,17 @@
 package app
 
-import "github.com/revel/revel"
+import (
+	"timezones_mc/datastore/elasticsearch"
+	"timezones_mc/datastore/elasticsearch/configs"
+
+	"github.com/revel/revel"
+)
+
+var ES *elasticsearch.ElasticStore
+
+func InitElasticsearch() {
+	ES = elasticsearch.NewElasticStore(configs.CityStoreConfig)
+}
 
 func init() {
 	// Filters is the default set of global filters.
@@ -23,6 +34,8 @@ func init() {
 	// ( order dependent )
 	// revel.OnAppStart(InitDB)
 	// revel.OnAppStart(FillCache)
+
+	revel.OnAppStart(InitElasticsearch)
 }
 
 // TODO turn this into revel.HeaderFilter
