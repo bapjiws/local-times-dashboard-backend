@@ -86,13 +86,60 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 
 	if result.Version == 1 && !result.Created {
-		return fmt.Errorf("City %s has not been indexed.\n", doc.String())
+		return fmt.Errorf("City %s has not been indexed.\n", doc) // doc.String()
 	}
 
 	// TODO: return this print statement?
 	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 	return nil
 }
+
+/*{
+	"query": {},
+	"suggest": {
+		"city_suggest": {
+			"text": "ain",
+			"completion": {
+				"field": "suggest"
+			}
+		}
+	}
+}*/
+
+// TODO: make "city_suggest" a const
+func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document, error) {
+	suggestResult, err := es.Search(es.IndexName).
+		Query(elastic.NewBoolQuery()).
+		Suggester(elastic.NewCompletionSuggester("city_suggest").Text(docName)).Do()
+	if err != nil {
+		return nil, err
+	}
+
+	// type SearchSuggest map[string][]SearchSuggestion
+
+	//type SearchSuggestion struct {
+	//	Text    string                   `json:"text"`
+	//	Offset  int                      `json:"offset"`
+	//	Length  int                      `json:"length"`
+	//	Options []SearchSuggestionOption `json:"options"`
+	//}
+
+	results := make([]models.Document, len(suggestResult.Suggest["city_suggest"][0].Options))
+	for _, option := range suggestResult.Suggest["city_suggest"][0].Options {
+		result := struct{
+			text string
+			id string
+		}{
+			text: option.Text,
+			id: option.Payload.(map[string]string)["city_id"],
+		}
+
+		results = append(results, result)
+	}
+
+	return results, nil
+}
+
 
 // Delete and recreate the index if it exists, otherwise create a new index and an alias for it.
 // TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
