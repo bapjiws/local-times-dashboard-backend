@@ -51,4 +51,4 @@ get_deps:
 	go get -u github.com/satori/go.uuid
 
 reindex_cities:
-	go run scripts/cities/main.go -file=".raw_data/cities/worldcities.txt"
+	go run scripts/cities/main.go -file="$(RAW_DATA_FOLDER)/cities/worldcities.txt"
