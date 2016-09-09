@@ -14,7 +14,7 @@ func (c App) Index() revel.Result {
 }
 
 func (c App) SearchCity(name string) revel.Result{
-	response, _ := app.ES.SearchDocumentByName(name)
+	response, _ := app.ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")
 	// TODO: handle error
 
 	//response := make(map[string]interface{})

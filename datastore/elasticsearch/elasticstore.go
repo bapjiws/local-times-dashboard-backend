@@ -106,12 +106,10 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 }*/
 
-// TODO: make "city_suggest" a const?
-// TODO: "city_suggest" & "city_id" are NOT abstract like Document
-func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document, error) {
+func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
 		Query(elastic.NewBoolQuery()).Size(0).
-		Suggester(elastic.NewCompletionSuggester("city_suggest").Text(docName).Field("suggest")).Do()
+		Suggester(elastic.NewCompletionSuggester(suggesterName).Text(text).Field(field)).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -127,21 +125,20 @@ func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document,
 
 	// "payload": { "city_id": "0e2997f0-36c4-4995-8115-4f433b693775"}
 
-
-	results := make([]models.Document,0, len(suggestResult.Suggest["city_suggest"][0].Options))
-	for _, option := range suggestResult.Suggest["city_suggest"][0].Options {
-		result := struct {
+	suggestions := make([]models.Document, 0, len(suggestResult.Suggest[suggesterName][0].Options))
+	for _, option := range suggestResult.Suggest[suggesterName][0].Options {
+		suggestion := struct {
 			Text string `json:"text"`
 			Id   string `json:"id"`
 		}{
 			Text: option.Text,
-			Id: option.Payload.(map[string]interface{})["city_id"].(string),
+			Id:   option.Payload.(map[string]interface{})[payloadKey].(string),
 		}
 
-		results = append(results, result)
+		suggestions = append(suggestions, suggestion)
 	}
 
-	return results, nil
+	return suggestions, nil
 }
 
 // Delete and recreate the index if it exists, otherwise create a new index and an alias for it.
