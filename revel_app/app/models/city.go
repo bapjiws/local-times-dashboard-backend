@@ -22,6 +22,8 @@ type City struct {
 	Suggest     *elastic.SuggestField `json:"suggest"`
 }
 
+// TODO: make it implement either GoStringer or Stringer -- see https://golang.org/pkg/fmt/
+// It it's the former, use %#v in AddDocument when printing
 func (c City) String() string {
 	return c.Name
 }
