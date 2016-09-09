@@ -106,7 +106,8 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 }*/
 
-// TODO: make "city_suggest" a const
+// TODO: make "city_suggest" a const?
+// TODO: "city_suggest" & "city_id" are NOT abstract like Document
 func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
 		Query(elastic.NewBoolQuery()).Size(0).
@@ -124,14 +125,17 @@ func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document,
 	//	Options []SearchSuggestionOption `json:"options"`
 	//}
 
-	results := make([]models.Document, len(suggestResult.Suggest["city_suggest"][0].Options))
+	// "payload": { "city_id": "0e2997f0-36c4-4995-8115-4f433b693775"}
+
+
+	results := make([]models.Document,0, len(suggestResult.Suggest["city_suggest"][0].Options))
 	for _, option := range suggestResult.Suggest["city_suggest"][0].Options {
-		result := struct{
-			text string
-			id string
+		result := struct {
+			Text string `json:"text"`
+			Id   string `json:"id"`
 		}{
-			text: option.Text,
-			id: option.Payload.(map[string]string)["city_id"],
+			Text: option.Text,
+			Id: option.Payload.(map[string]interface{})["city_id"].(string),
 		}
 
 		results = append(results, result)
@@ -139,7 +143,6 @@ func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document,
 
 	return results, nil
 }
-
 
 // Delete and recreate the index if it exists, otherwise create a new index and an alias for it.
 // TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
