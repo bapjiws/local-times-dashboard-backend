@@ -86,7 +86,7 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 
 	if result.Version == 1 && !result.Created {
-		return fmt.Errorf("City %s has not been indexed.\n", doc) // doc.String()
+		return fmt.Errorf("City %s has not been indexed.\n", doc)
 	}
 
 	// TODO: return this print statement?
