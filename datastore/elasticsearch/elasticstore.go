@@ -109,8 +109,8 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 // TODO: make "city_suggest" a const
 func (es *ElasticStore) SearchDocumentByName(docName string) ([]models.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
-		Query(elastic.NewBoolQuery()).
-		Suggester(elastic.NewCompletionSuggester("city_suggest").Text(docName)).Do()
+		Query(elastic.NewBoolQuery()).Size(0).
+		Suggester(elastic.NewCompletionSuggester("city_suggest").Text(docName).Field("suggest")).Do()
 	if err != nil {
 		return nil, err
 	}
