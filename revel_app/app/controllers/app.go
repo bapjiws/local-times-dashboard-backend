@@ -3,6 +3,8 @@ package controllers
 import (
 	"github.com/revel/revel"
 	"timezones_mc/revel_app/app"
+	"timezones_mc/revel_app/app/models"
+	"encoding/json"
 )
 
 type App struct {
@@ -25,12 +27,17 @@ func (a App) SuggestCities(name string) revel.Result{
 }
 
 func (a App) FindCityById(id string) revel.Result {
-	response, err := app.ES.FindDocumentById(id)
+	rawResponse, err := app.ES.FindDocumentById(id)
 
 	// TODO: handle error better?
 	if err != nil {
 		return a.RenderJson(map[string]interface{}{"error": err.Error()})
 	}
 
-	return a.RenderJson(response)
+	city := &models.City{}
+	if err = json.Unmarshal(rawResponse.(json.RawMessage), city); err != nil {
+		return a.RenderJson(map[string]interface{}{"error": err.Error()})
+	}
+
+	return a.RenderJson(city)
 }

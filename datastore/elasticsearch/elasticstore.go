@@ -111,7 +111,12 @@ func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
 	if err != nil {
 		return err, nil
 	}
-	return result, nil
+
+	if !result.Found {
+		// TODO: handle
+	}
+
+	return *result.Source, nil // will need to decode *json.RawMessage on the receiving side.
 }
 
 func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
