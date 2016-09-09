@@ -9,17 +9,28 @@ type App struct {
 	*revel.Controller
 }
 
-func (c App) Index() revel.Result {
-	return c.Render()
+func (a App) Index() revel.Result {
+	return a.Render()
 }
 
-func (c App) SearchCity(name string) revel.Result{
+func (a App) SuggestCities(name string) revel.Result{
 	response, err := app.ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")
 
 	// TODO: handle error better?
 	if err != nil {
-		return c.RenderJson(map[string]interface{}{"error": err.Error()})
+		return a.RenderJson(map[string]interface{}{"error": err.Error()})
 	}
 
-	return c.RenderJson(response)
+	return a.RenderJson(response)
+}
+
+func (a App) FindCityById(id string) revel.Result {
+	response, err := app.ES.FindDocumentById(id)
+
+	// TODO: handle error better?
+	if err != nil {
+		return a.RenderJson(map[string]interface{}{"error": err.Error()})
+	}
+
+	return a.RenderJson(response)
 }

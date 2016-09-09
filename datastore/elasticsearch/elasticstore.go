@@ -106,6 +106,14 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 }*/
 
+func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
+	result, err := es.Get().Index(es.IndexName).Type(es.TypeName).Id(id).Do()
+	if err != nil {
+		return err, nil
+	}
+	return result, nil
+}
+
 func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
 		Query(elastic.NewBoolQuery()).Size(0).
