@@ -14,11 +14,12 @@ func (c App) Index() revel.Result {
 }
 
 func (c App) SearchCity(name string) revel.Result{
-	response, _ := app.ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")
-	// TODO: handle error
+	response, err := app.ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")
 
-	//response := make(map[string]interface{})
-	//response["the_city_you_searched_for"] = name
+	// TODO: handle error better?
+	if err != nil {
+		return c.RenderJson(map[string]interface{}{"error": err.Error()})
+	}
 
 	return c.RenderJson(response)
 }
