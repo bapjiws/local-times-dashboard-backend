@@ -49,6 +49,11 @@ get_deps:
 	go get -u gopkg.in/olivere/elastic.v3
 	go get -u github.com/revel/cmd/revel
 	go get -u github.com/satori/go.uuid
+	go get -u github.com/stretchr/testify
+	go get -u github.com/vektra/mockery/.../
+
+test:
+	go test -v datastore/*.go
 
 reindex_cities:
 	go run scripts/cities/main.go -file="$(RAW_DATA_FOLDER)/cities/worldcities.txt"
