@@ -13,17 +13,11 @@ import (
 	"timezones_mc/datastore/elasticsearch"
 	"timezones_mc/datastore/elasticsearch/configs"
 	"timezones_mc/revel_app/app/models"
+	"timezones_mc/utils"
 
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )
-
-// TODO: create a utils folder and move it there?
-func panicOnError(e error) {
-	if e != nil {
-		panic(e.Error())
-	}
-}
 
 var (
 	fileFlag        = flag.String("file", "", "file to parse")
@@ -48,7 +42,7 @@ func main() {
 
 	esStore := elasticsearch.NewElasticStore(configs.CityStoreConfig)
 	err := esStore.Reindex()
-	panicOnError(err)
+	utils.PanicOnError(err)
 
 	file, err := os.Open(*fileFlag)
 	if err != nil {
@@ -65,7 +59,7 @@ func main() {
 	csvReader.LazyQuotes = true // panic: line 19970, column 7: bare " in non-quoted-field
 
 	headers, err := csvReader.Read()
-	panicOnError(err)
+	utils.PanicOnError(err)
 	fmt.Printf("Headers: %v\n", headers) // [Country City AccentCity Region Population Latitude Longitude]
 
 	records := recordGenerator(csvReader)
@@ -75,7 +69,7 @@ func main() {
 		Workers(8).
 		BulkActions(1000).
 		Do()
-	panicOnError(err)
+	utils.PanicOnError(err)
 
 	pipe := mergeCityChannels(
 		getCityChan(records),
@@ -96,7 +90,7 @@ func main() {
 
 	// Ask workers to commit all requests
 	err = bulkProcessor.Flush()
-	panicOnError(err)
+	utils.PanicOnError(err)
 }
 
 func recordGenerator(csvReader *csv.Reader) <-chan []string {
@@ -109,7 +103,7 @@ func recordGenerator(csvReader *csv.Reader) <-chan []string {
 				close(records) // That's it, folks!
 				break
 			}
-			panicOnError(err)
+			utils.PanicOnError(err)
 			records <- line
 		}
 	}()

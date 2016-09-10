@@ -1,5 +1,3 @@
 package models
 
-type Document interface {
-	//String() string
-}
+type Document interface {}

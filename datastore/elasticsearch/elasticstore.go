@@ -5,17 +5,11 @@ import (
 	"log"
 	"os"
 	"timezones_mc/revel_app/app/models"
+	"timezones_mc/utils"
 
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )
-
-// TODO: export to utils
-func panicOnError(e error) {
-	if e != nil {
-		panic(e.Error())
-	}
-}
 
 func connect() (client *elastic.Client) {
 	var err error
@@ -27,24 +21,24 @@ func connect() (client *elastic.Client) {
 	switch debugMode {
 	case "NONE":
 		client, err = elastic.NewClient()
-		panicOnError(err)
-	case "CONSOLE": // Stuff adopted from: https://github.com/olivere/elastic/wiki/Logging
+		utils.PanicOnError(err)
+	case "CONSOLE":
 		client, err = elastic.NewClient(
 			elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
 			elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
 			elastic.SetTraceLog(log.New(os.Stderr, "[[ELASTIC]]", 0)),
 		)
-		panicOnError(err)
-	case "FILE":
+		utils.PanicOnError(err)
+	case "FILE": // Stuff adopted from: https://github.com/olivere/elastic/wiki/Logging
 		file, err := os.OpenFile("elastic.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
-		panicOnError(err)
+		utils.PanicOnError(err)
 
 		client, err = elastic.NewClient(
 			elastic.SetInfoLog(log.New(file, "ELASTIC ", log.LstdFlags)),
 			elastic.SetErrorLog(log.New(file, "ELASTIC ", log.LstdFlags)),
 			elastic.SetTraceLog(log.New(file, "ELASTIC ", log.LstdFlags)),
 		)
-		panicOnError(err)
+		utils.PanicOnError(err)
 	}
 
 	return client
