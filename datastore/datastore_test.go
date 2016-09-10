@@ -75,5 +75,45 @@ func TestFindDocumentById(t *testing.T) {
 
 // SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error)
 func TestSuggestDocuments(t *testing.T) {
+	assert := assert.New(t)
 
+	testDataStore := new(mocks.Datastore)
+
+	suggesterName := mocks.SuggesterName
+	field := mocks.Field
+	payloadKey := mocks.PayloadKey
+
+	testCases := []struct {
+		text        string
+		suggestions []models.Document
+		error       error
+	}{
+		{
+			text:        mocks.BadText,
+			suggestions: nil,
+			error:       errors.New("Bad suggestion text!"),
+		},
+		{
+			text:        mocks.GoodTextWithNoSuggestions,
+			suggestions: mocks.EmptyDocumentList,
+			error:       nil,
+		},
+		{
+			text:        mocks.GoodTextWithSomeSuggestions,
+			suggestions: mocks.GoodDocuments,
+			error:       nil,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testDataStore.
+			On("SuggestDocuments", suggesterName, testCase.text, field, payloadKey).
+			Return(testCase.suggestions, testCase.error)
+		suggestions, err := testDataStore.SuggestDocuments(suggesterName, testCase.text, field, payloadKey)
+		assert.Equal(testCase.suggestions, suggestions)
+		assert.Equal(testCase.error, err)
+	}
+
+	// Assert that everything specified with On and Return was in fact called as expected.
+	testDataStore.AssertExpectations(t)
 }
