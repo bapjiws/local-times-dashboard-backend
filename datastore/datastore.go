@@ -4,5 +4,6 @@ import "timezones_mc/revel_app/app/models"
 
 type Datastore interface {
 	AddDocument(doc models.Document) error
-	SearchDocumentByName(docName string) ([]models.Document, error)
+	FindDocumentById(id string) (models.Document, error)
+	SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error)
 }
