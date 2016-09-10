@@ -10,7 +10,7 @@ import (
 	"gopkg.in/olivere/elastic.v3"
 )
 
-// TODO: export
+// TODO: export to utils
 func panicOnError(e error) {
 	if e != nil {
 		panic(e.Error())
@@ -20,16 +20,15 @@ func panicOnError(e error) {
 func connect() (client *elastic.Client) {
 	var err error
 	var debugMode = os.Getenv("DEBUG_MODE")
-	if debugMode == "" { // TODO bad cases like "console" or "file"
+	if debugMode == "" {
 		debugMode = "NONE"
 	}
 
-	// Stuff adopted from: https://github.com/olivere/elastic/wiki/Logging
 	switch debugMode {
 	case "NONE":
 		client, err = elastic.NewClient()
 		panicOnError(err)
-	case "CONSOLE":
+	case "CONSOLE": // Stuff adopted from: https://github.com/olivere/elastic/wiki/Logging
 		client, err = elastic.NewClient(
 			elastic.SetInfoLog(log.New(os.Stdout, "", log.LstdFlags)),
 			elastic.SetErrorLog(log.New(os.Stderr, "ELASTIC ", log.LstdFlags)),
@@ -68,7 +67,7 @@ func NewElasticStore(config *ElasticConfig) *ElasticStore {
 }
 
 func (es *ElasticStore) AddDocument(doc models.Document) error {
-	/*If city already exists, update the document and refresh the index.
+	/*If the document already exists, update it and refresh the index.
 	Refresh vs Flush: Changes to Lucene are only persisted to disk during a Lucene commit (flush), which is a relatively
 	heavy operation and so cannot be performed after every index or delete operation. The refresh API allows to explicitly
 	refresh one or more index, making all operations performed since the last refresh available for search.
@@ -81,16 +80,13 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 		BodyJson(doc).
 		Do()
 	if err != nil {
-		// TODO: Handle error
-		panic(err)
+		return fmt.Errorf("Error while attempting to index the document: %s.\n", err.Error())
 	}
 
 	if result.Version == 1 && !result.Created {
-		return fmt.Errorf("City %s has not been indexed.\n", doc)
+		return fmt.Errorf("Document %s has not been indexed.\n", doc)
 	}
 
-	// TODO: return this print statement?
-	//fmt.Printf("Indexed city %s to index %s, type %s\n", result.Id, result.Index, result.Type)
 	return nil
 }
 
@@ -113,7 +109,7 @@ func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
 	}
 
 	if !result.Found {
-		// TODO: handle
+		// TODO: implement a typed error and use it here.
 	}
 
 	return *result.Source, nil // will need to decode *json.RawMessage on the receiving side.
@@ -154,8 +150,7 @@ func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, fiel
 	return suggestions, nil
 }
 
-// Delete and recreate the index if it exists, otherwise create a new index and an alias for it.
-// TODO: reindex with zero downtime, see: https://www.elastic.co/blog/changing-mapping-with-zero-downtime
+// Delete the index if it exists, otherwise create a new index and an alias for it.
 func (es *ElasticStore) Reindex() error {
 	indexName := es.IndexName
 
