@@ -5,6 +5,7 @@ import (
 	"timezones_mc/revel_app/app"
 	"timezones_mc/revel_app/app/models"
 	"encoding/json"
+	//"timezones_mc/utils"
 )
 
 type App struct {
@@ -18,7 +19,7 @@ func (a App) Index() revel.Result {
 func (a App) SuggestCities(name string) revel.Result{
 	response, err := app.ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")
 
-	// TODO: handle error better?
+	// TODO: handle error better? Or create a utils wrappper to avoid code duplication
 	if err != nil {
 		return a.RenderJson(map[string]interface{}{"error": err.Error()})
 	}
@@ -27,7 +28,7 @@ func (a App) SuggestCities(name string) revel.Result{
 }
 
 func (a App) FindCityById(id string) revel.Result {
-	rawResponse, err := app.ES.FindDocumentById(id)
+	response, err := app.ES.FindDocumentById(id)
 
 	// TODO: handle error better?
 	if err != nil {
@@ -35,7 +36,13 @@ func (a App) FindCityById(id string) revel.Result {
 	}
 
 	city := &models.City{}
-	if err = json.Unmarshal(rawResponse.(json.RawMessage), city); err != nil {
+
+	//data, err := utils.GetBytes(response)
+	//if err != nil {
+	//	return a.RenderJson(map[string]interface{}{"error": err.Error()})
+	//}
+
+	if err = json.Unmarshal(response.([]byte), city); err != nil {
 		return a.RenderJson(map[string]interface{}{"error": err.Error()})
 	}
 
