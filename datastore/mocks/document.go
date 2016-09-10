@@ -13,3 +13,10 @@ var (
 		SelfDescription: "S'all good, man.",
 	}
 )
+
+var (
+	BadId  = "123"
+	GoodId = "4b06dcbe-aba8-4314-a7c4-03cdde197a38"
+)
+
+
