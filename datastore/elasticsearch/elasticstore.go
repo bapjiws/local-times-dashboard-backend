@@ -108,12 +108,7 @@ func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
 		return nil, err
 	}
 
-	resultInBytes, err := searchResult.Source.MarshalJSON()
-	if err != nil {
-		return nil, err
-	}
-
-	return resultInBytes, nil
+	return searchResult.Source, nil
 }
 
 func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
