@@ -105,7 +105,7 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
 	result, err := es.Get().Index(es.IndexName).Type(es.TypeName).Id(id).Do()
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	if !result.Found {
