@@ -45,13 +45,16 @@ start_tools: start_elasticsearch start_kibana
 
 stop_tools: stop_elasticsearch stop_kibana
 
-get_deps:
+out_deps:
 	go get gopkg.in/olivere/elastic.v3
 	go get github.com/revel/cmd/revel
 	go get github.com/satori/go.uuid
 	go get github.com/stretchr/testify
 	go get github.com/vektra/mockery/.../
 	go get github.com/tools/godep
+
+local_deps:
+	go get -d github.com/bapjiws/timezones_mc/...
 
 test:
 	go test -v datastore/*.go

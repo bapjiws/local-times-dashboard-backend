@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/revel/revel"
-	"timezones_mc/revel_app/app"
+	"github.com/bapjiws/timezones_mc/revel_app/app"
 )
 
 type App struct {

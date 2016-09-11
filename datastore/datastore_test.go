@@ -3,8 +3,8 @@ package datastore
 import (
 	"errors"
 	"testing"
-	"timezones_mc/datastore/mocks"
-	"timezones_mc/revel_app/app/models"
+	"github.com/bapjiws/timezones_mc/datastore/mocks"
+	"github.com/bapjiws/timezones_mc/revel_app/app/models"
 
 	"github.com/stretchr/testify/assert"
 )

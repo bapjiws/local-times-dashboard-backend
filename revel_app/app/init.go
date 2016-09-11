@@ -1,9 +1,8 @@
 package app
 
 import (
-	"timezones_mc/datastore/elasticsearch"
-	"timezones_mc/datastore/elasticsearch/configs"
-
+	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
+	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
 	"github.com/revel/revel"
 )
 

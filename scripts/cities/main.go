@@ -10,11 +10,11 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"timezones_mc/datastore/elasticsearch"
-	"timezones_mc/datastore/elasticsearch/configs"
-	"timezones_mc/revel_app/app/models"
-	"timezones_mc/utils"
 
+	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
+	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
+	"github.com/bapjiws/timezones_mc/revel_app/app/models"
+	"github.com/bapjiws/timezones_mc/utils"
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )

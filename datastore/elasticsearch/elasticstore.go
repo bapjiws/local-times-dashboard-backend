@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"timezones_mc/revel_app/app/models"
-	"timezones_mc/utils"
+	"github.com/bapjiws/timezones_mc/revel_app/app/models"
+	"github.com/bapjiws/timezones_mc/utils"
 
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"

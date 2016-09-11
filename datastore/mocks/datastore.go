@@ -1,8 +1,7 @@
 package mocks
 
 import (
-	"timezones_mc/revel_app/app/models"
-
+	"github.com/bapjiws/timezones_mc/revel_app/app/models"
 	"github.com/stretchr/testify/mock"
 )
 
