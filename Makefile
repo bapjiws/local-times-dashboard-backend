@@ -46,11 +46,12 @@ start_tools: start_elasticsearch start_kibana
 stop_tools: stop_elasticsearch stop_kibana
 
 get_deps:
-	go get -u gopkg.in/olivere/elastic.v3
-	go get -u github.com/revel/cmd/revel
-	go get -u github.com/satori/go.uuid
-	go get -u github.com/stretchr/testify
-	go get -u github.com/vektra/mockery/.../
+	go get gopkg.in/olivere/elastic.v3
+	go get github.com/revel/cmd/revel
+	go get github.com/satori/go.uuid
+	go get github.com/stretchr/testify
+	go get github.com/vektra/mockery/.../
+	go get github.com/tools/godep
 
 test:
 	go test -v datastore/*.go
