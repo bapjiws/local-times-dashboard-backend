@@ -4,3 +4,4 @@ script:
   - go version
   - go vet -v $(go list ./... | grep -v /vendor/)
   - go test -v $(go list ./... | grep -v /vendor/)
+  - go build $(go list ./... | grep -v /vendor/)
