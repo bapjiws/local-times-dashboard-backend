@@ -1,7 +1,9 @@
-script:
-  - rm -r $GOROOT/*
-  - curl https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz | tar -xz -C $GOROOT --strip-components=1
-  - go version
-  - go vet -v $(go list ./... | grep -v /vendor/)
-  - go test -v $(go list ./... | grep -v /vendor/)
-  - go build $(go list ./... | grep -v /vendor/)
+build:
+  image: golang
+  commands:
+    - rm -r $GOROOT/*
+    - curl https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz | tar -xz -C $GOROOT --strip-components=1
+    - go version
+    - go vet -v $(go list ./... | grep -v /vendor/)
+    - go test -v $(go list ./... | grep -v /vendor/)
+    - go build $(go list ./... | grep -v /vendor/)
