@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -66,7 +67,7 @@ func main() {
 
 	// On the usage of bulk processor, see: https://github.com/olivere/elastic/wiki/BulkProcessor
 	bulkProcessor, err := esStore.BulkProcessor().
-		Workers(8).
+		Workers(runtime.NumCPU()).
 		BulkActions(1000).
 		Do()
 	utils.PanicOnError(err)
