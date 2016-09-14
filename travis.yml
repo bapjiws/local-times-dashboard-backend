@@ -1,0 +1,8 @@
+language: go
+go:
+ - 1.6.3
+
+script:
+ - go vet -v $(go list ./... | grep -v /vendor/)
+ - go test -v $(go list ./... | grep -v /vendor/)
+ - go build $(go list ./... | grep -v /vendor/)
