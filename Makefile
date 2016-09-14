@@ -5,7 +5,7 @@ CITIES_URL = http://download.maxmind.com/download/worldcities/worldcitiespop.txt
 ELASTICSEARCH_URL = https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.0/elasticsearch-2.4.0.tar.gz
 KIBANA_URL = https://download.elastic.co/kibana/kibana/kibana-4.6.1-linux-x86_64.tar.gz
 
-run:
+start_revel_app:
 	revel run timezones_mc/revel_app
 
 get_cities:
@@ -41,9 +41,9 @@ get_sense:
 
 get_tools: get_elasticsearch get_kibana get_sense
 
-start_tools: start_elasticsearch start_kibana
+run: start_elasticsearch start_kibana start_revel_app
 
-stop_tools: stop_elasticsearch stop_kibana
+stop: stop_elasticsearch stop_kibana
 
 deps:
 	go get gopkg.in/olivere/elastic.v3
