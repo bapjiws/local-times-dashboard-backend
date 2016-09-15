@@ -54,7 +54,15 @@ deps:
 	go get github.com/tools/godep
 
 test:
-	go test -v datastore/*.go
+	go test -v $$(go list ./... | grep -v /vendor/)
+
+vet:
+	go vet -v $$(go list ./... | grep -v /vendor/)
+
+build:
+	go build $$(go list ./... | grep -v /vendor/)
+
+check: vet test build
 
 reindex_cities:
 	go run scripts/cities/main.go -file="$(RAW_DATA_FOLDER)/cities/worldcities.txt"
