@@ -16,8 +16,11 @@ func init() {
 }
 
 func main() {
-	r := gin.New()
-	r.Use(shared.SetContext(ES), shared.Logger())
+	// Creates a gin router with default middleware:
+	// logger and recovery (crash-free) middleware
+	r := gin.Default()
+
+	r.Use(shared.SetContext(ES))
 
 	r.GET("/city", city.SuggestCities)
 
