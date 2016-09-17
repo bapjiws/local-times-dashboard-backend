@@ -1,6 +1,6 @@
 package datastore
 
-import "github.com/bapjiws/timezones_mc/revel_app/app/models"
+import "github.com/bapjiws/timezones_mc/models"
 
 type Datastore interface {
 	AddDocument(doc models.Document) error

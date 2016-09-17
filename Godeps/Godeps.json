@@ -1,5 +1,5 @@
 {
-	"ImportPath": "timezones_mc",
+	"ImportPath": "github.com/bapjiws/timezones_mc",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
 	"Packages": [
@@ -15,6 +15,25 @@
 			"ImportPath": "github.com/davecgh/go-spew/spew",
 			"Comment": "v1.0.0-3-g6d21280",
 			"Rev": "6d212800a42e8ab5c146b8ace3490ee17e5225f9"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/binding",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/render",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "1f49d83d9aa00e6ce4fc8258c71cc7786aec968a"
 		},
 		{
 			"ImportPath": "github.com/klauspost/compress/flate",
@@ -42,39 +61,13 @@
 			"Rev": "19b0b332c9e4516a6370a0456e6182c3b5036720"
 		},
 		{
+			"ImportPath": "github.com/manucorporat/sse",
+			"Rev": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d"
+		},
+		{
 			"ImportPath": "github.com/pmezard/go-difflib/difflib",
 			"Comment": "v1.0.0",
 			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
-		},
-		{
-			"ImportPath": "github.com/revel/config",
-			"Comment": "v0.13.0",
-			"Rev": "75f5ee659b5338d1ce823536fe9b9e50b4de01b4"
-		},
-		{
-			"ImportPath": "github.com/revel/modules/static/app/controllers",
-			"Comment": "v0.13.0-1-gc3a4c48",
-			"Rev": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9"
-		},
-		{
-			"ImportPath": "github.com/revel/modules/testrunner/app",
-			"Comment": "v0.13.0-1-gc3a4c48",
-			"Rev": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9"
-		},
-		{
-			"ImportPath": "github.com/revel/modules/testrunner/app/controllers",
-			"Comment": "v0.13.0-1-gc3a4c48",
-			"Rev": "c3a4c48d9f199a6f1a77a198d38f6aee3b48b4d9"
-		},
-		{
-			"ImportPath": "github.com/revel/revel",
-			"Comment": "v0.13.1",
-			"Rev": "8d01a054f6bca9430b3e497fe7b4f20ec8f054ce"
-		},
-		{
-			"ImportPath": "github.com/revel/revel/testing",
-			"Comment": "v0.13.1",
-			"Rev": "8d01a054f6bca9430b3e497fe7b4f20ec8f054ce"
 		},
 		{
 			"ImportPath": "github.com/robfig/pathtree",
@@ -121,6 +114,11 @@
 			"Rev": "a8a77c9133d2d6fd8334f3260d06f60e8d80a5fb"
 		},
 		{
+			"ImportPath": "gopkg.in/go-playground/validator.v8",
+			"Comment": "v8.18.1",
+			"Rev": "5f57d2222ad794d0dffb07e664ea05e2ee07d60c"
+		},
+		{
 			"ImportPath": "gopkg.in/olivere/elastic.v3",
 			"Comment": "v3.0.50",
 			"Rev": "f9fd15e1ea3a50bbe58c72a4b8820499fe3bb0e1"
@@ -134,6 +132,10 @@
 			"ImportPath": "gopkg.in/olivere/elastic.v3/uritemplates",
 			"Comment": "v3.0.50",
 			"Rev": "f9fd15e1ea3a50bbe58c72a4b8820499fe3bb0e1"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "31c299268d302dd0aa9a0dcf765a3d58971ac83f"
 		}
 	]
 }

@@ -1,6 +1,6 @@
 package mocks
 
-import "github.com/bapjiws/timezones_mc/revel_app/app/models"
+import "github.com/bapjiws/timezones_mc/models"
 
 // Mock documents
 type MockDocument struct {
