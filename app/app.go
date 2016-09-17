@@ -23,6 +23,7 @@ func main() {
 	r.Use(shared.SetContext(ES))
 
 	r.GET("/city", city.SuggestCities)
+	r.GET("/city/:id", city.FindCityById)
 
 	// Listen and server on 0.0.0.0:8080
 	r.Run(":8080")
