@@ -1,6 +1,6 @@
 package mocks
 
-import "github.com/bapjiws/timezones_mc/models"
+import "github.com/bapjiws/timezones_mc/models/document"
 
 // Mock documents
 type MockDocument struct {
@@ -16,7 +16,7 @@ var (
 		SelfDescription: "S'all good, man.",
 	}
 
-	GoodDocuments = []models.Document{
+	GoodDocuments = []document.Document{
 		MockDocument{
 			SelfDescription: "S'all good, man.",
 		},
@@ -25,7 +25,7 @@ var (
 		},
 	}
 
-	EmptyDocumentList = []models.Document{}
+	EmptyDocumentList = []document.Document{}
 )
 
 // Mock IDs

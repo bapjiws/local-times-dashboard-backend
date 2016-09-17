@@ -3,28 +3,28 @@ package datastore
 import (
 	"errors"
 	"testing"
-	"github.com/bapjiws/timezones_mc/datastore/mocks"
-	"github.com/bapjiws/timezones_mc/models"
-
 	"github.com/stretchr/testify/assert"
+	document_mocks "github.com/bapjiws/timezones_mc/models/document/mocks"
+	datastore_mocks "github.com/bapjiws/timezones_mc/models/datastore/mocks"
+	"github.com/bapjiws/timezones_mc/models/document"
 )
 
 // AddDocument(doc models.Document) error
 func TestAddDocument(t *testing.T) {
 	assert := assert.New(t)
 
-	testDataStore := new(mocks.Datastore)
+	testDataStore := new(datastore_mocks.Datastore)
 
 	testCases := []struct {
-		document models.Document
+		document document.Document
 		error    error
 	}{
 		{
-			document: mocks.BadDocument,
+			document: document_mocks.BadDocument,
 			error:    errors.New("Bad document!"),
 		},
 		{
-			document: mocks.GoodDocument,
+			document: document_mocks.GoodDocument,
 			error:    nil,
 		},
 	}
@@ -43,21 +43,21 @@ func TestAddDocument(t *testing.T) {
 func TestFindDocumentById(t *testing.T) {
 	assert := assert.New(t)
 
-	testDataStore := new(mocks.Datastore)
+	testDataStore := new(datastore_mocks.Datastore)
 
 	testCases := []struct {
 		id       string
-		document models.Document
+		document document.Document
 		error    error
 	}{
 		{
-			id:       mocks.BadId,
+			id:       document_mocks.BadId,
 			document: nil,
 			error:    errors.New("Bad id!"),
 		},
 		{
-			id:       mocks.GoodId,
-			document: mocks.GoodDocument,
+			id:       document_mocks.GoodId,
+			document: document_mocks.GoodDocument,
 			error:    nil,
 		},
 	}
@@ -77,30 +77,30 @@ func TestFindDocumentById(t *testing.T) {
 func TestSuggestDocuments(t *testing.T) {
 	assert := assert.New(t)
 
-	testDataStore := new(mocks.Datastore)
+	testDataStore := new(datastore_mocks.Datastore)
 
-	suggesterName := mocks.SuggesterName
-	field := mocks.Field
-	payloadKey := mocks.PayloadKey
+	suggesterName := document_mocks.SuggesterName
+	field := document_mocks.Field
+	payloadKey := document_mocks.PayloadKey
 
 	testCases := []struct {
 		text        string
-		suggestions []models.Document
+		suggestions []document.Document
 		error       error
 	}{
 		{
-			text:        mocks.BadText,
+			text:        document_mocks.BadText,
 			suggestions: nil,
 			error:       errors.New("Bad suggestion text!"),
 		},
 		{
-			text:        mocks.GoodTextWithNoSuggestions,
-			suggestions: mocks.EmptyDocumentList,
+			text:        document_mocks.GoodTextWithNoSuggestions,
+			suggestions: document_mocks.EmptyDocumentList,
 			error:       nil,
 		},
 		{
-			text:        mocks.GoodTextWithSomeSuggestions,
-			suggestions: mocks.GoodDocuments,
+			text:        document_mocks.GoodTextWithSomeSuggestions,
+			suggestions: document_mocks.GoodDocuments,
 			error:       nil,
 		},
 	}

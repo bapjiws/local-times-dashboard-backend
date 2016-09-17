@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"github.com/bapjiws/timezones_mc/models"
+	"github.com/bapjiws/timezones_mc/models/document"
 	"github.com/bapjiws/timezones_mc/utils"
-
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )
@@ -60,7 +59,7 @@ func NewElasticStore(config *ElasticConfig) *ElasticStore {
 	return &ElasticStore{config, connect()}
 }
 
-func (es *ElasticStore) AddDocument(doc models.Document) error {
+func (es *ElasticStore) AddDocument(doc document.Document) error {
 	/*If the document already exists, update it and refresh the index.
 	Refresh vs Flush: Changes to Lucene are only persisted to disk during a Lucene commit (flush), which is a relatively
 	heavy operation and so cannot be performed after every index or delete operation. The refresh API allows to explicitly
@@ -96,7 +95,7 @@ func (es *ElasticStore) AddDocument(doc models.Document) error {
 	}
 }*/
 
-func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
+func (es *ElasticStore) FindDocumentById(id string) (document.Document, error) {
 	searchResult, err := es.Get().Index(es.IndexName).Type(es.TypeName).Id(id).Do()
 	if err != nil {
 		return nil, err
@@ -105,7 +104,7 @@ func (es *ElasticStore) FindDocumentById(id string) (models.Document, error) {
 	return searchResult.Source, nil
 }
 
-func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
+func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]document.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
 		Query(elastic.NewBoolQuery()).Size(0).
 		Suggester(elastic.NewCompletionSuggester(suggesterName).Text(text).Field(field)).Do()
@@ -124,7 +123,7 @@ func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, fiel
 
 	// "payload": { "city_id": "0e2997f0-36c4-4995-8115-4f433b693775"}
 
-	suggestions := make([]models.Document, 0, len(suggestResult.Suggest[suggesterName][0].Options))
+	suggestions := make([]document.Document, 0, len(suggestResult.Suggest[suggesterName][0].Options))
 	for _, option := range suggestResult.Suggest[suggesterName][0].Options {
 		suggestion := struct {
 			Text string `json:"text"`

@@ -11,10 +11,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
-	"github.com/bapjiws/timezones_mc/models"
+	"github.com/bapjiws/timezones_mc/models/city"
 	"github.com/bapjiws/timezones_mc/utils"
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
@@ -112,8 +111,8 @@ func recordGenerator(csvReader *csv.Reader) <-chan []string {
 	return records
 }
 
-func getCityChan(records <-chan []string) chan *models.City {
-	cities := make(chan *models.City)
+func getCityChan(records <-chan []string) chan *city.City {
+	cities := make(chan *city.City)
 
 	go func() {
 		for record := range records {
@@ -121,7 +120,7 @@ func getCityChan(records <-chan []string) chan *models.City {
 			latitude, _ := strconv.ParseFloat(record[5], 64)
 			longitude, _ := strconv.ParseFloat(record[6], 64)
 
-			city := &models.City{
+			city := &city.City{
 				Id:          id,
 				Name:        record[1], // TODO: All names are lowercase -- do something about it?
 				AccentName:  record[2],
@@ -145,10 +144,10 @@ func getCityChan(records <-chan []string) chan *models.City {
 
 }
 
-func mergeCityChannels(cityChannels ...chan *models.City) chan *models.City {
-	pipe := make(chan *models.City)
+func mergeCityChannels(cityChannels ...chan *city.City) chan *city.City {
+	pipe := make(chan *city.City)
 
-	output := func(cityChan <-chan *models.City) {
+	output := func(cityChan <-chan *city.City) {
 		for city := range cityChan {
 			pipe <- city
 		}

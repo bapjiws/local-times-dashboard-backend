@@ -1,4 +1,4 @@
-package models
+package city
 
 import "gopkg.in/olivere/elastic.v3"
 

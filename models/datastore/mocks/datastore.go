@@ -1,7 +1,7 @@
-package mocks
+package datastore
 
 import (
-	"github.com/bapjiws/timezones_mc/models"
+	"github.com/bapjiws/timezones_mc/models/document"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -11,11 +11,11 @@ type Datastore struct {
 }
 
 // AddDocument provides a mock function with given fields: doc
-func (_m *Datastore) AddDocument(doc models.Document) error {
+func (_m *Datastore) AddDocument(doc document.Document) error {
 	ret := _m.Called(doc)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(models.Document) error); ok {
+	if rf, ok := ret.Get(0).(func(document.Document) error); ok {
 		r0 = rf(doc)
 	} else {
 		r0 = ret.Error(0)
@@ -25,15 +25,15 @@ func (_m *Datastore) AddDocument(doc models.Document) error {
 }
 
 // FindDocumentById provides a mock function with given fields: id
-func (_m *Datastore) FindDocumentById(id string) (models.Document, error) {
+func (_m *Datastore) FindDocumentById(id string) (document.Document, error) {
 	ret := _m.Called(id)
 
-	var r0 models.Document
-	if rf, ok := ret.Get(0).(func(string) models.Document); ok {
+	var r0 document.Document
+	if rf, ok := ret.Get(0).(func(string) document.Document); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(models.Document)
+			r0 = ret.Get(0).(document.Document)
 		}
 	}
 
@@ -48,15 +48,15 @@ func (_m *Datastore) FindDocumentById(id string) (models.Document, error) {
 }
 
 // SuggestDocuments provides a mock function with given fields: suggesterName, text, field, payloadKey
-func (_m *Datastore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]models.Document, error) {
+func (_m *Datastore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]document.Document, error) {
 	ret := _m.Called(suggesterName, text, field, payloadKey)
 
-	var r0 []models.Document
-	if rf, ok := ret.Get(0).(func(string, string, string, string) []models.Document); ok {
+	var r0 []document.Document
+	if rf, ok := ret.Get(0).(func(string, string, string, string) []document.Document); ok {
 		r0 = rf(suggesterName, text, field, payloadKey)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Document)
+			r0 = ret.Get(0).([]document.Document)
 		}
 	}
 

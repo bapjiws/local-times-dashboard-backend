@@ -1,3 +1,3 @@
-package models
+package document
 
 type Document interface {}
