@@ -1,3 +1,3 @@
 package document
 
-type Document interface {}
+type Document interface{}

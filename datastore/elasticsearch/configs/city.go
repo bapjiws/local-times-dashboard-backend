@@ -40,6 +40,6 @@ var mapping = `{
 
 var CityStoreConfig *elasticsearch.ElasticConfig = &elasticsearch.ElasticConfig{
 	IndexName: "timezones",
-	TypeName:   "city",
+	TypeName:  "city",
 	Mapping:   mapping,
 }

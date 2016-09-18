@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"github.com/bapjiws/timezones_mc/models/document"
 	"github.com/bapjiws/timezones_mc/utils"
 	"github.com/satori/go.uuid"

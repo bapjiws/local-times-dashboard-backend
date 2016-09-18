@@ -3,10 +3,11 @@ package datastore
 import (
 	"errors"
 	"testing"
-	"github.com/stretchr/testify/assert"
-	document_mocks "github.com/bapjiws/timezones_mc/models/document/mocks"
+
 	datastore_mocks "github.com/bapjiws/timezones_mc/models/datastore/mocks"
 	"github.com/bapjiws/timezones_mc/models/document"
+	document_mocks "github.com/bapjiws/timezones_mc/models/document/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
 // AddDocument(doc models.Document) error

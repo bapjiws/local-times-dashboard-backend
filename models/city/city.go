@@ -1,6 +1,8 @@
 package city
 
-import "gopkg.in/olivere/elastic.v3"
+import (
+	"gopkg.in/olivere/elastic.v3"
+)
 
 // City implements the Document interface.
 // This struct partially maps to the ones that we get from our city database:

@@ -1,6 +1,8 @@
 package datastore
 
-import "github.com/bapjiws/timezones_mc/models/document"
+import (
+	"github.com/bapjiws/timezones_mc/models/document"
+)
 
 type Datastore interface {
 	AddDocument(doc document.Document) error

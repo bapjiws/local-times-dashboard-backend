@@ -2,6 +2,7 @@ package shared
 
 import (
 	"log"
+
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
 	"github.com/gin-gonic/gin"
 )
