@@ -64,5 +64,9 @@ build:
 
 check: vet test build
 
+set_hooks:
+	sudo chmod +x hooks/pre-commit && cd .git/hooks && ln -sf ../../hooks/pre-commit pre-commit
+
+
 reindex_cities:
 	go run scripts/cities/main.go -file="$(RAW_DATA_FOLDER)/cities/worldcities.txt"

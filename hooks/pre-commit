@@ -1,0 +1,12 @@
+#!/bin/sh
+
+gofiles=$(git diff --name-only --diff-filter=ACM | grep '\.go$')
+
+for gofile in $gofiles; do
+    gofmt -w $gofile
+    goimports -w $gofile
+done
+
+git add -A
+
+exit 0
