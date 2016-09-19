@@ -17,10 +17,10 @@ get_elasticsearch:
 	tar -xvz -C $(TOOLS_FOLDER)/elasticsearch --strip-components=1
 
 start_elasticsearch:
-	$(TOOLS_FOLDER)/elasticsearch/bin/elasticsearch -d -p elasticsearch.pid
+	$(TOOLS_FOLDER)/elasticsearch/bin/elasticsearch -d -p $(TOOLS_FOLDER)/elasticsearch/elasticsearch.pid
 
 stop_elasticsearch:
-	kill `cat elasticsearch.pid`
+	kill `cat $(TOOLS_FOLDER)/elasticsearch/elasticsearch.pid`
 
 clean_elasticsearch:
 	curl -XDELETE "localhost:9200/*"
