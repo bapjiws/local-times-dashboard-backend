@@ -8,7 +8,7 @@ import (
 )
 
 func SuggestCities(c *gin.Context) {
-	ES := c.MustGet("ES").(*elasticsearch.ElasticStore)
+	ES := c.MustGet("Datastore").(*elasticsearch.ElasticStore)
 	name := c.Query("name") // shortcut for c.Request.URL.Query().Get("name")
 
 	response, err := ES.SuggestDocuments("city_suggest", name, "suggest", "city_id")

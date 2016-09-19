@@ -3,15 +3,15 @@ package shared
 import (
 	"log"
 
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
+	"github.com/bapjiws/timezones_mc/models/datastore"
 	"github.com/gin-gonic/gin"
 )
 
 // TODO: create and object for storing the context?
-func SetContext(es *elasticsearch.ElasticStore) gin.HandlerFunc {
+func SetContext(ds datastore.Datastore) gin.HandlerFunc {
 	log.Println("USE SetContext")
 
 	return func(c *gin.Context) {
-		c.Set("ES", es)
+		c.Set("Datastore", ds)
 	}
 }
