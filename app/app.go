@@ -25,6 +25,6 @@ func main() {
 	r.GET("/city", handlers.SuggestCities)
 	r.GET("/city/:id", handlers.FindCityById)
 
-	// Listen and server on 0.0.0.0:8080
-	r.Run(":8080")
+	// Listen and server on 0.0.0.0:8888
+	r.Run(":8888")
 }
