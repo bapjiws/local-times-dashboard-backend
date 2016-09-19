@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/bapjiws/timezones_mc/app/handlers/city"
-	"github.com/bapjiws/timezones_mc/app/middleware/shared"
+	"github.com/bapjiws/timezones_mc/app/handlers"
+	"github.com/bapjiws/timezones_mc/app/middleware"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
 	"github.com/gin-gonic/gin"
@@ -10,7 +10,7 @@ import (
 
 var ES *elasticsearch.ElasticStore
 
-// TODO: create an object for context and initialize it here
+// TODO: create an object/map for context and initialize it here
 func init() {
 	ES = elasticsearch.NewElasticStore(configs.CityStoreConfig)
 }
@@ -20,10 +20,10 @@ func main() {
 	// logger and recovery (crash-free) middleware
 	r := gin.Default()
 
-	r.Use(shared.SetContext(ES))
+	r.Use(middleware.SetContext(ES))
 
-	r.GET("/city", city.SuggestCities)
-	r.GET("/city/:id", city.FindCityById)
+	r.GET("/city", handlers.SuggestCities)
+	r.GET("/city/:id", handlers.FindCityById)
 
 	// Listen and server on 0.0.0.0:8080
 	r.Run(":8080")
