@@ -1,12 +1,13 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/bapjiws/timezones_mc/app/handlers"
 	"github.com/bapjiws/timezones_mc/app/middleware"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 const (

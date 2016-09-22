@@ -41,7 +41,10 @@ get_sense:
 
 get_tools: get_elasticsearch get_kibana get_sense
 
-run: start_elasticsearch start_kibana start_app
+run: start_elasticsearch start_kibana wait start_app
+
+wait:
+	sleep 10
 
 stop: stop_elasticsearch stop_kibana
 
