@@ -6,6 +6,12 @@ import (
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
 	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
 	"github.com/gin-gonic/gin"
+	"net/http"
+)
+
+const (
+	APIBASE = "api"
+	PORT    = ":8888"
 )
 
 var ES *elasticsearch.ElasticStore
@@ -18,13 +24,23 @@ func init() {
 func main() {
 	// Creates a gin router with default middleware:
 	// logger and recovery (crash-free) middleware
-	r := gin.Default()
+	router := gin.Default()
 
-	r.Use(middleware.SetContext(ES))
+	router.Use(middleware.SetContext(ES))
 
-	r.GET("/city", handlers.SuggestCities)
-	r.GET("/city/:id", handlers.FindCityById)
+	router.GET("/city", handlers.SuggestCities)
+	router.GET("/city/:id", handlers.FindCityById)
+
+	routerGroup := router.Group(APIBASE)
+	routerGroup.OPTIONS("/city", preflight)
+	routerGroup.GET("/city", handlers.SuggestCities)
 
 	// Listen and server on 0.0.0.0:8888
-	r.Run(":8888")
+	router.Run(PORT)
+}
+
+func preflight(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "http://localhost")
+	c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+	c.JSON(http.StatusOK, struct{}{})
 }
