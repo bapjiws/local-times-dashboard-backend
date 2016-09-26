@@ -23,7 +23,7 @@ func SuggestCities(c *gin.Context) {
 }
 
 func FindCityById(c *gin.Context) {
-	ES := c.MustGet("ES").(*elasticsearch.ElasticStore)
+	ES := c.MustGet("Datastore").(*elasticsearch.ElasticStore)
 	id := c.Param("id") // shortcut for c.Request.URL.Query().Get("name")
 
 	response, err := ES.FindDocumentById(id)
@@ -32,8 +32,7 @@ func FindCityById(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 
-	// TODO: add c.Header("Access-Control-Allow-Origin", "*") or middleware
-
+	c.Header("Access-Control-Allow-Origin", "*") // TODO: put into a middleware?
 	// TODO: turn generic response into a City model here (e.g, to get rid of "suggest")?
 	c.JSON(http.StatusOK, response)
 }
