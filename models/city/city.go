@@ -12,6 +12,7 @@ type City struct {
 	Name        string                `json:"name"`        // aka "City"
 	AccentName  string                `json:"accentName"`  // aka "AccentCity"
 	CountryCode string                `json:"countryCode"` // aka "Country"
+	Country     string                `json:"country"`
 	Latitude    float64               `json:"latitude"`
 	Longitude   float64               `json:"longitude"`
 	Suggest     *elastic.SuggestField `json:"suggest"`

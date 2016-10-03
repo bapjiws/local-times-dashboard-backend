@@ -2,12 +2,16 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -20,13 +24,46 @@ import (
 	"gopkg.in/olivere/elastic.v3"
 )
 
-var (
-	fileFlag        = flag.String("file", "", "file to parse")
-	wg              sync.WaitGroup
-	start           time.Time
-	citiesRead      uint64 = 0
-	citiesProcessed uint64 = 0
+const (
+	countryNamesByCodesUrl = "http://country.io/names.json"
 )
+
+var (
+	fileFlag            = flag.String("file", "", "file to parse")
+	countryNamesByCodes map[string]string
+	wg                  sync.WaitGroup
+	start               time.Time
+	citiesRead          uint64 = 0
+	citiesProcessed     uint64 = 0
+)
+
+func init() {
+	countryNamesByCodes = getCountryNamesByCodes(countryNamesByCodesUrl)
+}
+
+func getCountryNamesByCodes(url string) map[string]string {
+	resp, err := http.Get(url)
+	// TODO: make a utils func for this routine
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error while fetching the country names: %s\n", err.Error())
+		os.Exit(1)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error while reading response body: %s\n", err.Error())
+		os.Exit(1)
+	}
+
+	countryNamesByCodes := make(map[string]string)
+	if err := json.Unmarshal(body, &countryNamesByCodes); err != nil {
+		fmt.Fprintf(os.Stderr, "Error while parsing JSON: %s\n", err.Error())
+		os.Exit(1)
+	}
+
+	return countryNamesByCodes
+}
 
 // go run scripts/cities/main.go -file=".raw_data/cities/worldcities.txt"
 func main() {
@@ -120,12 +157,14 @@ func getCityChan(records <-chan []string) chan *city.City {
 			id := uuid.NewV4().String()
 			latitude, _ := strconv.ParseFloat(record[5], 64)
 			longitude, _ := strconv.ParseFloat(record[6], 64)
+			countryCode := strings.ToUpper(record[0])
 
 			city := &city.City{
 				Id:          id,
 				Name:        record[1], // TODO: All names are lowercase -- do something about it?
 				AccentName:  record[2],
-				CountryCode: record[0],
+				CountryCode: countryCode,
+				Country:     countryNamesByCodes[countryCode],
 				Latitude:    latitude,
 				Longitude:   longitude,
 				Suggest: elastic.NewSuggestField().
