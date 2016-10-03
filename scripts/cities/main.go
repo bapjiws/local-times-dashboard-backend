@@ -155,21 +155,24 @@ func getCityChan(records <-chan []string) chan *city.City {
 	go func() {
 		for record := range records {
 			id := uuid.NewV4().String()
+			cityNameLowercase := record[1]
+			accentName := record[2]
+			countryCode := strings.ToUpper(record[0])
+			country := countryNamesByCodes[countryCode]
 			latitude, _ := strconv.ParseFloat(record[5], 64)
 			longitude, _ := strconv.ParseFloat(record[6], 64)
-			countryCode := strings.ToUpper(record[0])
 
 			city := &city.City{
 				Id:          id,
-				Name:        record[1], // TODO: All names are lowercase -- do something about it?
-				AccentName:  record[2],
+				Name:        cityNameLowercase,
+				AccentName:  accentName,
 				CountryCode: countryCode,
-				Country:     countryNamesByCodes[countryCode],
+				Country:     country,
 				Latitude:    latitude,
 				Longitude:   longitude,
 				Suggest: elastic.NewSuggestField().
-					Input(record[1]).
-					Output(record[2]).
+					Input(cityNameLowercase).
+					Output(fmt.Sprintf("%s, %s", accentName, country)).
 					Payload(map[string]string{"city_id": id}),
 			}
 
