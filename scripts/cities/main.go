@@ -59,7 +59,6 @@ func init() {
 
 }
 
-// go run scripts/cities/main.go -file=".raw_data/cities/worldcities.txt"
 func main() {
 	start = time.Now()
 
