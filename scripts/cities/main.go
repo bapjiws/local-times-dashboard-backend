@@ -143,7 +143,7 @@ func recordGenerator(csvReader *csv.Reader) <-chan []string {
 	return records
 }
 
-func getCityChan(records <-chan []string) chan *city.City {
+func getCityChan(records <-chan []string) <-chan *city.City {
 	cities := make(chan *city.City)
 
 	go func() {
@@ -181,7 +181,7 @@ func getCityChan(records <-chan []string) chan *city.City {
 
 }
 
-func mergeCityChannels(cityChannels ...chan *city.City) chan *city.City {
+func mergeCityChannels(cityChannels ...<-chan *city.City) <-chan *city.City {
 	pipe := make(chan *city.City)
 
 	output := func(cityChan <-chan *city.City) {
