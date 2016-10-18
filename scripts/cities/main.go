@@ -38,12 +38,7 @@ var (
 )
 
 func init() {
-	countryNamesByCodes = getCountryNamesByCodes(countryNamesByCodesUrl)
-}
-
-func getCountryNamesByCodes(url string) map[string]string {
-	resp, err := http.Get(url)
-	// TODO: make a utils func for this routine
+	resp, err := http.Get(countryNamesByCodesUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error while fetching the country names: %s\n", err.Error())
 		os.Exit(1)
@@ -56,13 +51,12 @@ func getCountryNamesByCodes(url string) map[string]string {
 		os.Exit(1)
 	}
 
-	countryNamesByCodes := make(map[string]string)
+	//countryNamesByCodes := make(map[string]string)
 	if err := json.Unmarshal(body, &countryNamesByCodes); err != nil {
 		fmt.Fprintf(os.Stderr, "Error while parsing JSON: %s\n", err.Error())
 		os.Exit(1)
 	}
 
-	return countryNamesByCodes
 }
 
 // go run scripts/cities/main.go -file=".raw_data/cities/worldcities.txt"
@@ -72,7 +66,7 @@ func main() {
 	flag.Parse()
 
 	if *fileFlag == "" {
-		fmt.Fprintf(os.Stderr, "CSV file has not been specified. Use the 'file' flag:\n")
+		fmt.Fprint(os.Stderr, "CSV file has not been specified. Use the 'file' flag:\n")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
