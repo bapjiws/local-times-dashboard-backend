@@ -102,12 +102,12 @@ func main() {
 		Do()
 	utils.PanicOnError(err)
 
-	pipe := mergeCityChannels(
-		getCityChan(records),
-		getCityChan(records),
-		getCityChan(records),
-		getCityChan(records),
-	)
+	cityChannels := make([]<-chan *city.City, 0, runtime.NumCPU())
+	for i := 0; i < runtime.NumCPU(); i++ {
+		cityChannels = append(cityChannels, getCityChan(records))
+	}
+
+	pipe := mergeCityChannels(cityChannels...)
 	for city := range pipe {
 		atomic.AddUint64(&citiesProcessed, 1)
 		bulkRequest := elastic.NewBulkIndexRequest().Index(esStore.IndexName).Type(esStore.TypeName).Id(city.Id).Doc(city)
