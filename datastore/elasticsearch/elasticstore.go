@@ -105,9 +105,10 @@ func (es *ElasticStore) FindDocumentById(id string) (document.Document, error) {
 	return searchResult.Source, nil
 }
 
+// TODO: use a struct to encapsulate all the method's parameters.
 func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]document.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
-		Query(elastic.NewBoolQuery()).Size(0).
+		Query(elastic.NewBoolQuery()).Size(0). // TODO: try to remove this phase.
 		Suggester(elastic.NewCompletionSuggester(suggesterName).Text(text).Field(field)).Do()
 	if err != nil {
 		return nil, err
