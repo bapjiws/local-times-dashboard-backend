@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/bapjiws/timezones_mc/models/document"
+	"github.com/bapjiws/timezones_mc/models/suggest"
 	"github.com/bapjiws/timezones_mc/utils"
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
@@ -93,23 +94,21 @@ func (es *ElasticStore) FindDocumentById(id string) (document.Document, error) {
 	return searchResult.Source, nil
 }
 
-// TODO: use a struct to encapsulate all the method's parameters.
-func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, field string, payloadKey string) ([]document.Document, error) {
+func (es *ElasticStore) SuggestDocuments(s suggest.Suggest) ([]document.Document, error) {
 	suggestResult, err := es.Search(es.IndexName).
-		Query(elastic.NewBoolQuery()).Size(0). // TODO: try to remove this phase.
-		Suggester(elastic.NewCompletionSuggester(suggesterName).Text(text).Field(field)).Do()
+		Suggester(elastic.NewCompletionSuggester(s.SuggesterName).Text(s.Text).Field(s.Field)).Do()
 	if err != nil {
 		return nil, err
 	}
 
-	suggestions := make([]document.Document, 0, len(suggestResult.Suggest[suggesterName][0].Options))
-	for _, option := range suggestResult.Suggest[suggesterName][0].Options {
+	suggestions := make([]document.Document, 0, len(suggestResult.Suggest[s.SuggesterName][0].Options))
+	for _, option := range suggestResult.Suggest[s.SuggesterName][0].Options {
 		suggestion := struct {
 			Text string `json:"text"`
 			Id   string `json:"id"`
 		}{
 			Text: option.Text,
-			Id:   option.Payload.(map[string]interface{})[payloadKey].(string),
+			Id:   option.Payload.(map[string]interface{})[s.PayloadKeys["city_id"]].(string),
 		}
 
 		suggestions = append(suggestions, suggestion)
