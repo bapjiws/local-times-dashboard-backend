@@ -84,18 +84,6 @@ func (es *ElasticStore) AddDocument(doc document.Document) error {
 	return nil
 }
 
-/*{
-	"query": {},
-	"suggest": {
-		"city_suggest": {
-			"text": "ain",
-			"completion": {
-				"field": "suggest"
-			}
-		}
-	}
-}*/
-
 func (es *ElasticStore) FindDocumentById(id string) (document.Document, error) {
 	searchResult, err := es.Get().Index(es.IndexName).Type(es.TypeName).Id(id).Do()
 	if err != nil {
@@ -113,17 +101,6 @@ func (es *ElasticStore) SuggestDocuments(suggesterName string, text string, fiel
 	if err != nil {
 		return nil, err
 	}
-
-	// type SearchSuggest map[string][]SearchSuggestion
-
-	//type SearchSuggestion struct {
-	//	Text    string                   `json:"text"`
-	//	Offset  int                      `json:"offset"`
-	//	Length  int                      `json:"length"`
-	//	Options []SearchSuggestionOption `json:"options"`
-	//}
-
-	// "payload": { "city_id": "0e2997f0-36c4-4995-8115-4f433b693775"}
 
 	suggestions := make([]document.Document, 0, len(suggestResult.Suggest[suggesterName][0].Options))
 	for _, option := range suggestResult.Suggest[suggesterName][0].Options {
