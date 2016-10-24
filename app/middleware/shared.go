@@ -5,9 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TODO: create and object for storing the context?
-func SetContext(ds datastore.Datastore) gin.HandlerFunc {
+type Context struct {
+	DS datastore.Datastore
+}
+
+func SetContext(ctx Context) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("Datastore", ds)
+		c.Set("Datastore", ctx.DS)
 	}
 }

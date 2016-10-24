@@ -13,11 +13,12 @@ const (
 	PORT     = ":8888"
 )
 
-var ES *elasticsearch.ElasticStore
+var context middleware.Context
 
-// TODO: create an object/map for context and initialize it here
 func init() {
-	ES = elasticsearch.NewElasticStore(configs.CityStoreConfig)
+	context = middleware.Context{
+		DS: elasticsearch.NewElasticStore(configs.CityStoreConfig),
+	}
 }
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	// logger and recovery (crash-free) middleware
 	router := gin.Default()
 
-	router.Use(middleware.SetContext(ES))
+	router.Use(middleware.SetContext(context))
 
 	cityRouter := router.Group(API_BASE)
 	cityRouter.GET("/city", handlers.SuggestCities)
