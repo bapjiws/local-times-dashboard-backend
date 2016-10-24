@@ -26,7 +26,10 @@ func main() {
 	// logger and recovery (crash-free) middleware
 	router := gin.Default()
 
-	router.Use(middleware.SetContext(context))
+	router.Use(
+		middleware.SetContext(context),
+		middleware.AllowCors(),
+	)
 
 	cityRouter := router.Group(API_BASE)
 	cityRouter.GET("/city", handlers.SuggestCities)

@@ -14,3 +14,9 @@ func SetContext(ctx Context) gin.HandlerFunc {
 		c.Set("Datastore", ctx.DS)
 	}
 }
+
+func AllowCors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+	}
+}

@@ -23,7 +23,6 @@ func SuggestCities(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 
-	c.Header("Access-Control-Allow-Origin", "*") // TODO: put into a middleware?
 	c.JSON(http.StatusOK, response)
 
 }
@@ -38,7 +37,6 @@ func FindCityById(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
 	}
 
-	c.Header("Access-Control-Allow-Origin", "*") // TODO: put into a middleware?
 	// TODO: turn generic response into a City model here (e.g, to get rid of "suggest")?
 	c.JSON(http.StatusOK, response)
 }
