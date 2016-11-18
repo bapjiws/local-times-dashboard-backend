@@ -1,7 +1,3 @@
-revel_app/test-results/
-revel_app/tmp/
-revel_app/routes/
-
 .idea
 .raw_data
 .tools
