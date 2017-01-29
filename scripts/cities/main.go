@@ -155,6 +155,15 @@ func getCityChan(records <-chan []string) <-chan *city.City {
 			latitude, _ := strconv.ParseFloat(record[5], 64)
 			longitude, _ := strconv.ParseFloat(record[6], 64)
 
+			var output string
+			// For American cities, will also show its state.
+			if countryCode == "US" {
+				region := record[3]
+				output = fmt.Sprintf("%s, %s (%s)", accentName, region, country)
+			} else {
+				output = fmt.Sprintf("%s (%s)", accentName, country)
+			}
+
 			city := &city.City{
 				Id:          id,
 				Name:        cityNameLowercase,
@@ -165,7 +174,7 @@ func getCityChan(records <-chan []string) <-chan *city.City {
 				Longitude:   longitude,
 				Suggest: elastic.NewSuggestField().
 					Input(cityNameLowercase).
-					Output(fmt.Sprintf("%s, %s", accentName, country)).
+					Output(output).
 					Payload(map[string]string{"city_id": id}),
 			}
 
