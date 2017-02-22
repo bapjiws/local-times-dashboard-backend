@@ -1,2 +1,2 @@
-- Provide more than 5 suggestions
+- Amend suggestions' logic: e.g., London, UK, is not showing up, whereas we have 5 American cities --> allow to specify country first?
 - Cut the redundant data sent to the UI (?)
