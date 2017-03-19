@@ -21,7 +21,7 @@ func connect() (client *elastic.Client) {
 
 	switch debugMode {
 	case "NONE":
-		client, err = elastic.NewClient()
+		client, err = elastic.NewClient() // or, if using the default behavior of elasticsearch container, elastic.SetURL("http://172.17.0.2:9200")
 		utils.PanicOnError(err)
 	case "CONSOLE":
 		client, err = elastic.NewClient(

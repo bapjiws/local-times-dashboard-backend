@@ -1,0 +1,6 @@
+# See: https://www.elastic.co/blog/how-to-make-a-dockerfile-for-elasticsearch
+# See: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+
+docker volume create --name esdata
+docker run -it --rm --name es_container -p 127.0.0.1:9200:9200 -v esdata:/usr/share/elasticsearch/data elasticsearch:2.4.4-alpine
+docker exec -it es_container bash
