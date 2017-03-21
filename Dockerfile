@@ -6,8 +6,8 @@ COPY vendor ./vendor
 COPY datastore ./datastore
 COPY utils ./utils
 
-#CMD go run app/app.go
-CMD /bin/sh
+CMD go run app/app.go
+#CMD /bin/sh
 
 ### ALTERNATIVE: ###
 #FROM ubuntu

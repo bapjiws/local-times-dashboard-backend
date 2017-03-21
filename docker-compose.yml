@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+
+  es:
+    container_name: es_container
+    image: elasticsearch:2.4.4-alpine
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  api:
+    container_name: api_container
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: bapjiws/timezones_api:0.0.1
+    ports:
+      - 8888:8888
+    depends_on:
+      - es
+
+volumes:
+  esdata:
+    driver: local
