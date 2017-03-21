@@ -24,3 +24,12 @@ services:
 volumes:
   esdata:
     driver: local
+
+#See:
+#http://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach
+#https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+#https://docs.docker.com/compose/compose-file
+#networks:
+#  timezones_net:
+#    driver: host
+

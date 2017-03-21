@@ -6,7 +6,7 @@ COPY vendor ./vendor
 COPY datastore ./datastore
 COPY utils ./utils
 
-CMD go run app/app.go
+CMD go run app/app.go # See: https://docs.docker.com/compose/startup-order/
 #CMD /bin/sh
 
 ### ALTERNATIVE: ###
