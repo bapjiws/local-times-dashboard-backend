@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/bapjiws/timezones_mc",
+	"ImportPath": "github.com/bapjiws/local_times_dashboard_backend",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
 	"Packages": [

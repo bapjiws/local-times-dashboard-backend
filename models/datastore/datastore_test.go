@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	datastore_mocks "github.com/bapjiws/timezones_mc/models/datastore/mocks"
-	"github.com/bapjiws/timezones_mc/models/document"
-	document_mocks "github.com/bapjiws/timezones_mc/models/document/mocks"
+	datastore_mocks "github.com/bapjiws/local_times_dashboard_backend/models/datastore/mocks"
+	"github.com/bapjiws/local_times_dashboard_backend/models/document"
+	document_mocks "github.com/bapjiws/local_times_dashboard_backend/models/document/mocks"
 	"github.com/stretchr/testify/assert"
 )
 

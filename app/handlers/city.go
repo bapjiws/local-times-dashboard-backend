@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
-	"github.com/bapjiws/timezones_mc/models/suggest"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch"
+	"github.com/bapjiws/local_times_dashboard_backend/models/suggest"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

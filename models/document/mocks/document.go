@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"github.com/bapjiws/timezones_mc/models/document"
+	"github.com/bapjiws/local_times_dashboard_backend/models/document"
 )
 
 // Mock documents

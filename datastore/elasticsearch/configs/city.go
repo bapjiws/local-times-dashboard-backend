@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch"
 )
 
 var mapping = `{

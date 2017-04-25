@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/bapjiws/timezones_mc/models/datastore"
+	"github.com/bapjiws/local_times_dashboard_backend/models/datastore"
 	"github.com/gin-gonic/gin"
 )
 

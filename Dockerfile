@@ -1,5 +1,5 @@
 FROM golang:alpine
-WORKDIR ./src/github.com/bapjiws/timezones_mc
+WORKDIR ./src/github.com/bapjiws/local_times_dashboard_backend
 COPY app ./app
 COPY models ./models
 COPY vendor ./vendor

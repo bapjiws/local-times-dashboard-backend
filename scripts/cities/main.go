@@ -16,10 +16,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
-	"github.com/bapjiws/timezones_mc/models/city"
-	"github.com/bapjiws/timezones_mc/utils"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch/configs"
+	"github.com/bapjiws/local_times_dashboard_backend/models/city"
+	"github.com/bapjiws/local_times_dashboard_backend/utils"
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )

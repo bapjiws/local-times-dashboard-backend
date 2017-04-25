@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/bapjiws/timezones_mc/models/document"
-	"github.com/bapjiws/timezones_mc/models/suggest"
-	"github.com/bapjiws/timezones_mc/utils"
+	"github.com/bapjiws/local_times_dashboard_backend/models/document"
+	"github.com/bapjiws/local_times_dashboard_backend/models/suggest"
+	"github.com/bapjiws/local_times_dashboard_backend/utils"
 	"github.com/satori/go.uuid"
 	"gopkg.in/olivere/elastic.v3"
 )
@@ -21,7 +21,7 @@ func connect() (client *elastic.Client) {
 
 	switch debugMode {
 	case "NONE":
-		client, err = elastic.NewClient(elastic.SetURL("http://172.19.0.2:9200"))
+		client, err = elastic.NewClient(elastic.SetURL("http://172.20.0.2:9200"))
 		utils.PanicOnError(err)
 	case "CONSOLE":
 		client, err = elastic.NewClient(

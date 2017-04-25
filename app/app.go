@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/bapjiws/timezones_mc/app/handlers"
-	"github.com/bapjiws/timezones_mc/app/middleware"
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch"
-	"github.com/bapjiws/timezones_mc/datastore/elasticsearch/configs"
+	"github.com/bapjiws/local_times_dashboard_backend/app/handlers"
+	"github.com/bapjiws/local_times_dashboard_backend/app/middleware"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch"
+	"github.com/bapjiws/local_times_dashboard_backend/datastore/elasticsearch/configs"
 	"github.com/gin-gonic/gin"
 )
 
